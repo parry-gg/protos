@@ -1,0 +1,27 @@
+// Game management service for tournament competitions.
+// Provides operations for game metadata, creation, and integration with external databases.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/game.proto";
+
+// GetGamesRequest retrieves all available games.
+message GetGamesRequest {}
+
+// GetGamesResponse contains the list of games.
+message GetGamesResponse {
+  // All games available for tournament use.
+  repeated parrygg.models.Game games = 1;
+}
+
+// GameService provides game management operations.
+// Handles game metadata, creation, and external database integration.
+service GameService {
+  // List all available games for tournaments.
+  rpc GetGames (GetGamesRequest) returns (GetGamesResponse) {}
+  
+}

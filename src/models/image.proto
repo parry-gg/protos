@@ -1,0 +1,32 @@
+// Image management for tournaments, games, and users.
+// Handles different types of visual assets with URL-based storage.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// ImageType defines the purpose and display context for images.
+// Next id: 4
+enum ImageType {
+  // Default unspecified image type.
+  IMAGE_TYPE_UNSPECIFIED = 0;
+  // Banner image for headers and promotional displays.
+  IMAGE_TYPE_BANNER = 1;
+  // Avatar image for user profiles and small displays.
+  IMAGE_TYPE_AVATAR = 2;
+  // Cover image for large background displays.
+  IMAGE_TYPE_COVER = 3;
+}
+
+// Image represents a visual asset with type classification.
+// Next id: 4
+message Image {
+  // Unique identifier for the image (UUID v7).
+  string id = 1;
+  // URL where the image can be accessed.
+  string url = 2;
+  // Type classification for display purposes.
+  ImageType type = 3;
+}

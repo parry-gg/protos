@@ -1,0 +1,53 @@
+// Filtering criteria for tournament and event queries.
+// Provides search and filtering capabilities for retrieving specific subsets of data.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// EventsFilter specifies criteria for filtering tournament events.
+// Next id: 2
+message EventsFilter {
+  // Filter events by a specific user's participation.
+  optional string user_id = 1;
+}
+
+// TournamentsFilter specifies criteria for filtering tournaments.
+// Next id: 3
+message TournamentsFilter {
+  // Filter tournaments by a specific user's participation.
+  optional string user_id = 1;
+  // Filter tournaments by owner (organizer).
+  optional string owner_id = 2;
+  // Filter tournaments by administrative permissions.
+  optional AdminFilter admin_filter = 3;
+}
+
+// UsersFilter specifies criteria for searching users.
+message UsersFilter {
+  // Fuzzy match against user gamer tags.
+  optional string gamer_tag = 1;
+}
+
+// AdminFilterPermission defines administrative permission levels for filtering.
+// Corresponds to TournamentPermission options in tournament.proto, but with the extra "ANY" option.
+enum AdminFilterPermission {
+  // Match any permission level.
+  ADMIN_FILTER_PERMISSION_ANY = 0;
+  // Match admin-level permissions only.
+  ADMIN_FILTER_PERMISSION_ADMIN = 1;
+  // Match manager-level permissions and above.
+  ADMIN_FILTER_PERMISSION_MANAGER = 2;
+  // Match reporter-level permissions and above.
+  ADMIN_FILTER_PERMISSION_REPORTER = 3;
+}
+
+// AdminFilter filters tournaments by user administrative permissions.
+message AdminFilter {
+  // ID of the user to check permissions for.
+  string user_id = 1;
+  // Minimum permission level required.
+  AdminFilterPermission permission = 2;
+}

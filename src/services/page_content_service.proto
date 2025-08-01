@@ -1,0 +1,61 @@
+// Tournament page content management service.
+// Handles custom tournament pages, content creation, and markdown processing.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/tournament.proto";
+
+//Next id: 3
+message GetPageContentsRequest {
+  string tournament_id = 1;
+  parrygg.models.TournamentIdentifier tournament_identifier = 2;
+}
+
+message GetPageContentsResponse {
+  repeated parrygg.models.PageContent page_contents = 1;
+}
+
+message CreatePageContentRequest {
+  string tournament_id = 1;
+  parrygg.models.MutablePageContent page_content = 2;
+}
+
+message CreatePageContentResponse {
+  parrygg.models.PageContent page_content = 1;
+}
+
+message UpdatePageContentRequest {
+  string id = 1;
+  parrygg.models.MutablePageContent page_content = 2;
+}
+
+message UpdatePageContentResponse {
+  string id = 1;
+  parrygg.models.PageContent page_content = 2;
+}
+
+message DeletePageContentRequest {
+  string id = 1;
+}
+
+message DeletePageContentResponse {
+  parrygg.models.PageContent page_content = 1;
+}
+
+service PageContentService {
+  // Retrieves all page contents for a tournament by ID or identifier.
+  rpc GetPageContents (GetPageContentsRequest) returns (GetPageContentsResponse) {}
+  
+  // Creates new page content for a tournament.
+  rpc CreatePageContent (CreatePageContentRequest) returns (CreatePageContentResponse) {}
+  
+  // Updates existing page content by ID.
+  rpc UpdatePageContent (UpdatePageContentRequest) returns (UpdatePageContentResponse) {}
+  
+  // Deletes page content by ID.
+  rpc DeletePageContent (DeletePageContentRequest) returns (DeletePageContentResponse) {}
+}

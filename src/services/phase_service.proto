@@ -1,0 +1,46 @@
+// Tournament phase management service.
+// Provides operations for phase lifecycle, seeding, and bracket creation.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/phase.proto";
+import "models/entrant.proto";
+
+message GetPhaseRequest {
+  oneof identifier {
+    string id = 1;
+    parrygg.models.PhaseSlugId slug_id = 2;
+  }
+}
+
+message GetPhaseResponse {
+  parrygg.models.Phase phase = 1;
+}
+
+message GetPhasePlacementsRequest {
+  string id = 1;
+}
+
+message GetPhasePlacementsResponse {
+  repeated parrygg.models.Placement placements = 1;
+}
+
+message ResetPhaseRequest {
+  string id = 1;
+}
+
+message ResetPhaseResponse {
+}
+
+service PhaseService {
+  // Retrieves a phase by ID or slug identifier.
+  rpc GetPhase (GetPhaseRequest) returns (GetPhaseResponse) {}
+  
+  // Retrieves final placements for participants in a completed phase.
+  rpc GetPhasePlacements (GetPhasePlacementsRequest) returns (GetPhasePlacementsResponse) {}
+  
+}

@@ -1,0 +1,74 @@
+// Tournament request system for user interactions.
+// Manages teammate requests, invitations, and other user-to-user communications.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "models/user.proto";
+
+// RequestState tracks the lifecycle of user requests.
+enum RequestState {
+  // Default unspecified state.
+  REQUEST_STATE_UNSPECIFIED = 0;
+  // Request sent but not yet responded to.
+  REQUEST_STATE_PENDING = 1;
+  // Request accepted by recipient.
+  REQUEST_STATE_ACCEPTED = 2;
+  // Request rejected by recipient.
+  REQUEST_STATE_REJECTED = 3;
+}
+
+// Request represents a user-to-user interaction request.
+message Request {
+  // Unique identifier for the request (UUID v7).
+  string id = 1;
+  // ID of the user sending the request.
+  string from_user_id = 2;
+  // ID of the user receiving the request.
+  string to_user_id = 3;
+  // Current state of the request.
+  RequestState state = 4;
+  // Type-specific request data.
+  oneof type {
+    // Teammate invitation request.
+    TeammateRequest teammate_request = 5;
+  }
+}
+
+// RequestCreation contains the data needed to create a new request.
+message RequestCreation {
+  // ID of the user sending the request.
+  string from_user_id = 2;
+  // ID of the user receiving the request.
+  string to_user_id = 3;
+  // Type-specific request data.
+  oneof type {
+    // Teammate invitation request data.
+    TeammateRequestCreation teammate_request = 5;
+  }
+}
+
+// RequestMutation updates the state of an existing request.
+message RequestMutation {
+  // Updated request state (accept/reject).
+  RequestState state = 1;
+}
+
+// TeammateRequest represents an invitation to join a team for an event.
+message TeammateRequest {
+  // ID of the event entrant team to join.
+  string event_entrant_id = 1;
+  // User receiving the teammate invitation.
+  User to_user = 2;
+  // User sending the teammate invitation.
+  User from_user = 3;
+}
+
+// TeammateRequestCreation contains data for creating teammate requests.
+message TeammateRequestCreation {
+  // ID of the event entrant team to invite to.
+  string event_entrant_id = 1;
+}

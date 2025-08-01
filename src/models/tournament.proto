@@ -1,0 +1,189 @@
+// Tournament management and organization system.
+// Core tournament entities with events, registration, administration, and content management.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/timestamp.proto";
+import "models/image.proto";
+import "models/event.proto";
+
+import "models/slug.proto";
+import "models/user.proto";
+
+// TournamentState represents the current lifecycle state of a tournament.
+enum TournamentState {
+  // Default unspecified state.
+  TOURNAMENT_STATE_UNSPECIFIED = 0;
+  // Tournament created but not yet ready for registration.
+  TOURNAMENT_STATE_PENDING = 1;
+  // Tournament ready for registration and participation.
+  TOURNAMENT_STATE_READY = 2;
+  // Tournament currently running with active events.
+  TOURNAMENT_STATE_IN_PROGRESS = 3;
+  // Tournament completed with final results.
+  TOURNAMENT_STATE_COMPLETED = 4;
+}
+
+// TournamentPermission defines administrative access levels for tournaments.
+enum TournamentPermission {
+  // Default unspecified permission level.
+  PERMISSION_LEVEL_UNSPECIFIED = 0;
+  // Full administrative access to tournament.
+  PERMISSION_LEVEL_ADMIN = 1;
+  // Management access with most administrative privileges.
+  PERMISSION_LEVEL_MANAGER = 2;
+  // Reporting access for match updates and results.
+  PERMISSION_LEVEL_REPORTER = 3;
+}
+
+// Tournament represents a competitive gaming tournament with multiple events.
+// Contains all tournament metadata, events, and administrative information.
+// Next id: 19
+message Tournament {
+  // Unique identifier for the tournament (UUID v7).
+  string id = 1;
+  // Full display name of the tournament.
+  string name = 2;
+  // Abbreviated name for compact displays.
+  string short_name = 3;
+  // Physical address where the tournament takes place.
+  string venue_address = 4;
+  // Contact information for tournament administration.
+  string admin_contact = 7;
+  // Currency code for all monetary values (e.g., "USD").
+  string currency_code = 8;
+  // When the tournament begins.
+  google.protobuf.Timestamp start_date = 9;
+  // When the tournament ends.
+  google.protobuf.Timestamp end_date = 10;
+  // Current lifecycle state of the tournament.
+  TournamentState state = 11;
+  // Images associated with the tournament (banners, logos, etc.).
+  repeated Image images = 12;
+  // Competition events within this tournament.
+  repeated Event events = 13;
+  // Total number of registered attendees (derived value).
+  int32 num_attendees = 14;
+  // ID of the user who owns/organizes this tournament.
+  string owner_id = 15;
+  // URL slugs for accessing this tournament.
+  repeated Slug slugs = 16;
+  // Entry fee for tournament attendance in cents.
+  int32 venue_fee = 17;
+  // Time zone for tournament scheduling (e.g., "America/New_York").
+  string time_zone = 18;
+}
+
+// TournamentMutation updates mutable fields of a tournament.
+// Subset of Tournament with fields that may be mutated by a request.
+// Next id: 13
+message TournamentMutation {
+  // Updated tournament name.
+  optional string name = 1;
+  // Updated short name.
+  optional string short_name = 2;
+  // Updated venue address.
+  optional string venue_address = 3;
+  // Updated admin contact information.
+  optional string admin_contact = 6;
+  // Updated currency code.
+  optional string currency_code = 7;
+  // Updated start date.
+  optional google.protobuf.Timestamp start_date = 8;
+  // Updated end date.
+  optional google.protobuf.Timestamp end_date = 9;
+  // Updated owner ID.
+  optional string owner_id = 10;
+  // Updated venue fee in cents.
+  optional int32 venue_fee = 11;
+  // Updated time zone.
+  optional string time_zone = 12;
+}
+
+// PageContent represents custom content pages for tournaments.
+// Next id: 5
+message PageContent {
+  // Unique identifier for the page content (UUID v7).
+  string id = 1;
+  // Display order index for page navigation.
+  int32 index = 2;
+  // Page title for navigation and display.
+  string title = 3;
+  // Markdown-formatted page content.
+  string content_md = 4;
+}
+
+// MutablePageContent updates editable fields of page content.
+// Subset of PageContent with fields that may be mutated by a request.
+// Next id: 4
+message MutablePageContent {
+  // Updated display order index.
+  optional int32 index = 1;
+  // Updated page title.
+  optional string title = 2;
+  // Updated markdown content.
+  optional string content_md = 3;
+}
+
+// TournamentRegistration tracks a user's registration for a tournament.
+// Next id: 6
+message TournamentRegistration {
+  reserved 2;
+  // ID of the tournament being registered for.
+  string tournament_id = 1;
+  // Whether the user has paid the venue fee.
+  bool paid_venue_fee = 3;
+  // Registration details for individual events.
+  repeated EventRegistration event_registrations = 4;
+  // The user who is registered.
+  User user = 5;
+}
+
+// TournamentRegistrationMutation updates registration details.
+// Subset of TournamentRegistration with fields that may be mutated by a request.
+// Next id: 4
+message TournamentRegistrationMutation {
+  reserved 3;
+  // Updated venue fee payment status.
+  optional bool paid_venue_fee = 1;
+  // Updated event registration details.
+  repeated EventRegistrationMutation event_registrations = 2;
+}
+
+// BatchTournamentRegistrationMutation mutates a single users registration in the context of a larger batch.
+// Next id: 3
+message BatchTournamentRegistrationMutation {
+  // ID of the user whose registration to update.
+  string user_id = 1;
+  // Registration updates to apply.
+  parrygg.models.TournamentRegistrationMutation registration = 2;
+}
+
+// TournamentAttendee represents public information about tournament participation.
+// Information the client would show one user about other users' registration - e.g. which events, but not payment status.
+message TournamentAttendee {
+  // The attending user's public information.
+  parrygg.models.User user = 1;
+  // Events the user is attending (without payment details).
+  repeated parrygg.models.EventAttendance events = 2;
+}
+
+// TournamentIdentifier allows referencing a tournament by ID or slug.
+message TournamentIdentifier {
+  oneof identifier {
+    // Direct tournament ID lookup.
+    string id = 1;
+    // Tournament slug lookup.
+    string tournament_slug = 2;
+  }
+}
+
+// TournamentPermissionsMetadata contains permission information for a user.
+message TournamentPermissionsMetadata {
+  // The user's permission level for the tournament.
+  parrygg.models.TournamentPermission tournament_permission = 1;
+}

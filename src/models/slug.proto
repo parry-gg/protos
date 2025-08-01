@@ -1,0 +1,37 @@
+// URL-friendly identifier management for tournaments and events.
+// Provides human-readable URLs and handles slug versioning and conflicts.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+
+// SlugType defines the status and purpose of URL slugs.
+enum SlugType {
+  // Default unspecified slug type.
+  SLUG_TYPE_UNSPECIFIED = 0;
+  // Current primary slug for the entity.
+  SLUG_TYPE_PRIMARY = 1;
+  // Previously used slug that now redirects.
+  SLUG_TYPE_OUTDATED = 2;
+  // Custom slug set by user.
+  SLUG_TYPE_CUSTOM = 3;
+}
+
+// Slug represents a URL-friendly identifier for an entity.
+message Slug {
+  // The URL slug string.
+  string slug = 1;
+  // Type classification for this slug.
+  SlugType type = 2;
+}
+
+// MutableSlug allows updating slug information.
+message MutableSlug {
+  // Updated slug string.
+  string slug = 1;
+  // Updated slug type.
+  SlugType type = 2;
+}

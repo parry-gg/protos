@@ -1,0 +1,91 @@
+// Event management service for tournament events.
+// Provides CRUD operations, registration management, and event administration.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/event.proto";
+import "models/hierarchy.proto";
+import "models/filter.proto";
+import "models/entrant.proto";
+import "models/request.proto";
+
+// GetEventRequest retrieves a single event by ID.
+message GetEventRequest {
+  // Unique identifier of the event to retrieve.
+  string id = 1;
+}
+
+// GetEventResponse contains the requested event.
+message GetEventResponse {
+  // The requested event.
+  parrygg.models.Event event = 1;
+}
+
+// GetEventsRequest retrieves multiple events based on filter criteria.
+message GetEventsRequest {
+  // Filter criteria for selecting events.
+  parrygg.models.EventsFilter filter = 1;
+}
+
+// GetEventsResponse contains the filtered list of events.
+message GetEventsResponse {
+  // Events matching the filter criteria.
+  repeated parrygg.models.Event events = 1;
+}
+
+// ResetEventRequest clears all bracket and match data for an event.
+message ResetEventRequest {
+  // ID of the event to reset.
+  string id = 1;
+}
+
+// ResetEventResponse confirms the reset operation completed.
+message ResetEventResponse {}
+
+// GetEventPlacementsRequest retrieves final standings for an event.
+message GetEventPlacementsRequest {
+  oneof identifier {
+    // Direct event ID lookup.
+    string id = 1;
+    // Slug-based path lookup.
+    models.EventSlugPath event_slug_path = 2;
+  }
+}
+
+// GetEventPlacementsResponse contains the final event standings.
+message GetEventPlacementsResponse {
+  // Final placements ordered by ranking.
+  repeated parrygg.models.Placement placements = 1;
+}
+
+// GetEventEntrantsRequest retrieves all participants in an event.
+message GetEventEntrantsRequest {
+  // Event to get entrants for.
+  parrygg.models.EventIdentifier event_identifier = 1;
+}
+
+// GetEventEntrantsResponse contains all event participants.
+message GetEventEntrantsResponse {
+  // All entrants registered for the event.
+  repeated parrygg.models.EventEntrant event_entrants = 1;
+}
+
+// EventService provides tournament event management operations.
+// Handles event lifecycle, registration, and bracket administration.
+service EventService {
+  // Retrieve a single event by ID.
+  rpc GetEvent (GetEventRequest) returns (GetEventResponse) {}
+  // List events matching filter criteria.
+  rpc GetEvents (GetEventsRequest) returns (GetEventsResponse) {}
+  // Get final standings for a completed event.
+  rpc GetEventPlacements (GetEventPlacementsRequest) returns (GetEventPlacementsResponse) {}
+  // List all participants in an event.
+  rpc GetEventEntrants (GetEventEntrantsRequest) returns (GetEventEntrantsResponse) {}
+  // Reset event brackets and matches to initial state.
+  rpc ResetEvent (ResetEventRequest) returns (ResetEventResponse) {}
+  
+}

@@ -1,0 +1,94 @@
+// Tournament entrant and team management service.
+// Provides operations for participant registration, team formation, and entrant lifecycle.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/entrant.proto";
+
+message GetEventEntrantRequest {
+  string event_id = 1;
+  string entrant_id = 2;
+}
+
+message GetEventEntrantResponse {
+  parrygg.models.EventEntrant event_entrant = 1;
+}
+
+message CreateEventEntrantRequest {
+  string event_id = 1;
+  string entrant_id = 2;
+}
+
+message CreateEventEntrantResponse {
+  parrygg.models.EventEntrant event_entrant = 1;
+}
+
+message UpdateEventEntrantRequest {
+  string event_id = 1;
+  string entrant_id = 2;
+  parrygg.models.EventEntrantMutation event_entrant = 3;
+}
+
+message UpdateEventEntrantResponse {
+  parrygg.models.EventEntrant event_entrant = 1;
+}
+
+message DeleteEventEntrantRequest {
+  string event_id = 1;
+  string entrant_id = 2;
+}
+
+message DeleteEventEntrantResponse {}
+
+message RemoveFromEventEntrantRequest {
+  string event_entrant_id = 1;
+  string user_id = 2;
+  bool keep_in_event = 3;
+}
+
+message RemoveFromEventEntrantResponse {
+  parrygg.models.EventEntrant event_entrant = 1; // Returns the new team, with the user removed
+  parrygg.models.EventEntrant removed_free_agent = 2; // Returns the removed user's new event entrant, if they remained in the event
+}
+
+message DisbandEventEntrantRequest {
+  string event_entrant_id = 1;
+}
+
+message DisbandEventEntrantResponse {
+  parrygg.models.EventEntrant event_entrant = 1; // Returns the no-longer-extant disbanded team
+}
+
+message CreateTeamRequest {
+  string event_id = 1;
+  parrygg.models.TeamMutation team_mutation = 2;
+}
+
+message CreateTeamResponse {
+  parrygg.models.EventEntrant team = 1;
+}
+
+message UpdateTeamRequest {
+  string id = 1;
+  parrygg.models.TeamMutation team_mutation = 2;
+}
+
+message UpdateTeamResponse {
+  parrygg.models.EventEntrant team = 1;
+}
+
+service EntrantService {
+  rpc GetEventEntrant (GetEventEntrantRequest) returns (GetEventEntrantResponse) {}
+  rpc CreateEventEntrant (CreateEventEntrantRequest) returns (CreateEventEntrantResponse) {}
+  rpc UpdateEventEntrant (UpdateEventEntrantRequest) returns (UpdateEventEntrantResponse) {}
+  rpc DeleteEventEntrant (DeleteEventEntrantRequest) returns (DeleteEventEntrantResponse) {}
+  rpc RemoveFromEventEntrant (RemoveFromEventEntrantRequest) returns (RemoveFromEventEntrantResponse) {}
+  rpc DisbandEventEntrant (DisbandEventEntrantRequest) returns (DisbandEventEntrantResponse) {}
+  rpc CreateTeam (CreateTeamRequest) returns (CreateTeamResponse) {}
+  rpc UpdateTeam (UpdateTeamRequest) returns (UpdateTeamResponse) {}
+  
+}

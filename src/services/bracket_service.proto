@@ -1,0 +1,88 @@
+// Tournament bracket management service.
+// Provides operations for bracket lifecycle, match progression, and results.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "google/protobuf/timestamp.proto";
+import "models/bracket.proto";
+import "models/entrant.proto";
+
+// GetBracketRequest retrieves a bracket by ID or slug path.
+message GetBracketRequest {
+  oneof identifier {
+    // Direct bracket ID lookup.
+    string id = 1;
+    // Slug-based path lookup.
+    parrygg.models.BracketSlugId slug_id = 2;
+  }
+}
+
+// GetBracketResponse contains the requested bracket.
+message GetBracketResponse {
+  // The requested bracket with all matches and seeding.
+  parrygg.models.Bracket bracket = 1;
+}
+
+// GetBracketTimestampRequest retrieves the last modification time.
+message GetBracketTimestampRequest {
+  // ID of the bracket to check.
+  string id = 1;
+}
+
+// GetBracketTimestampResponse contains the modification timestamp.
+message GetBracketTimestampResponse {
+  // When the bracket was last updated.
+  google.protobuf.Timestamp updated_at = 1;
+}
+
+// ResetBracketRequest clears all bracket matches and results.
+message ResetBracketRequest {
+  // ID of the bracket to reset.
+  string id = 1;
+}
+
+// ResetBracketResponse confirms the reset operation.
+message ResetBracketResponse {}
+
+// GetBracketPlacementsRequest retrieves final standings.
+message GetBracketPlacementsRequest {
+  // ID of the bracket to get placements for.
+  string id = 1;
+}
+
+// GetBracketPlacementsResponse contains the final standings.
+message GetBracketPlacementsResponse {
+  // Final placements ordered by ranking.
+  repeated parrygg.models.Placement placements = 1;
+}
+
+// StartBracketRequest begins bracket competition.
+message StartBracketRequest {
+  // ID of the bracket to start.
+  string id = 1;
+}
+
+// StartBracketResponse contains the started bracket.
+message StartBracketResponse {
+  // The bracket after starting with initial matches created.
+  parrygg.models.Bracket bracket = 1;
+}
+
+// BracketService provides tournament bracket management operations.
+// Handles bracket lifecycle, match progression, and final results.
+service BracketService {
+  // Retrieve a bracket by ID or slug path.
+  rpc GetBracket (GetBracketRequest) returns (GetBracketResponse) {}
+  // Get the last modification timestamp for a bracket.
+  rpc GetBracketTimestamp (GetBracketTimestampRequest) returns (GetBracketTimestampResponse) {}
+  // Reset a bracket to initial state, clearing all matches.
+  rpc ResetBracket (ResetBracketRequest) returns (ResetBracketResponse) {}
+  // Get final standings for a completed bracket.
+  rpc GetBracketPlacements (GetBracketPlacementsRequest) returns (GetBracketPlacementsResponse) {}
+  // Start bracket competition and create initial matches.
+  rpc StartBracket (StartBracketRequest) returns (StartBracketResponse) {}
+}

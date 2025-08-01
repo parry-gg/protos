@@ -1,0 +1,66 @@
+// User profile and account management.
+// Handles user identity, profile information, and associated visual assets.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "models/image.proto";
+
+// User represents a platform user account with profile information.
+// Contains identity, contact, and personalization details.
+// Next id: 13
+message User {
+  // Unique identifier for the user (UUID v7).
+  string id = 1;
+  // Public gaming handle/username.
+  string gamer_tag = 2;
+  // User's first name.
+  string first_name = 3;
+  // User's last name.
+  string last_name = 4;
+  // Markdown-formatted biography/description.
+  string bio_md = 5;
+  // Preferred pronouns (e.g., "they/them").
+  string pronouns = 6;
+  // URL to user's avatar image.
+  string avatar_url = 7;
+  // Hex color code for profile banner.
+  string banner_color = 8;
+  // Country of residence.
+  string location_country = 9;
+  // State/province of residence.
+  string location_state = 10;
+  // City of residence.
+  string location_city = 11;
+  // Profile images (avatars, banners, etc.).
+  repeated Image images = 12;
+}
+
+// MutableUser updates editable fields of a user profile.
+// Subset of User with fields that may be mutated by a request.
+// Next id: 11
+message MutableUser {
+  // Updated gamer tag.
+  optional string gamer_tag = 1;
+  // Updated first name.
+  optional string first_name = 2;
+  // Updated last name.
+  optional string last_name = 3;
+  // Updated bio in markdown format.
+  optional string bio_md = 4;
+  // Updated pronouns.
+  optional string pronouns = 5;
+  // Updated avatar image ID.
+  optional string avatar_image_id = 6;
+  // Updated banner color.
+  optional string banner_color = 7;
+  // Updated country.
+  optional string location_country = 8;
+  // Updated state/province.
+  optional string location_state = 9;
+  // Updated city.
+  optional string location_city = 10;
+}

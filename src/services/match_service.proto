@@ -1,0 +1,64 @@
+// Match management service for tournament bracket matches.
+// Provides operations for match lifecycle, scoring, and state management.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/bracket.proto";
+
+// GetMatchRequest retrieves a specific match.
+message GetMatchRequest {
+  // ID of the match to retrieve.
+  string id = 1;
+}
+
+// GetMatchResponse contains the requested match.
+message GetMatchResponse {
+  // The requested match with participant slots and scores.
+  parrygg.models.Match match = 1;
+}
+
+// SetMatchResultRequest updates match scores and results.
+message SetMatchResultRequest {
+  // ID of the match to update.
+  string id = 1;
+  // Score and state updates for participants.
+  parrygg.models.MatchResult result = 2;
+}
+
+// SetMatchResultResponse confirms result update.
+message SetMatchResultResponse {}
+
+// ResetMatchRequest clears match results and returns to initial state.
+message ResetMatchRequest {
+  // ID of the match to reset.
+  string id = 1;
+}
+
+// ResetMatchResponse confirms match reset.
+message ResetMatchResponse {}
+
+// StartMatchRequest begins a match competition.
+message StartMatchRequest {
+  // ID of the match to start.
+  string id = 1;
+}
+
+// StartMatchResponse confirms match start.
+message StartMatchResponse {}
+
+// MatchService provides tournament match management operations.
+// Handles match lifecycle, scoring, and result reporting.
+service MatchService {
+  // Retrieve a specific match by ID.
+  rpc GetMatch (GetMatchRequest) returns (GetMatchResponse) {}
+  // Update match results and participant scores.
+  rpc SetMatchResult (SetMatchResultRequest) returns (SetMatchResultResponse) {}
+  // Start a match and change state to in-progress.
+  rpc StartMatch (StartMatchRequest) returns (StartMatchResponse) {}
+  // Reset a match to initial state, clearing results.
+  rpc ResetMatch (ResetMatchRequest) returns (ResetMatchResponse) {}
+}

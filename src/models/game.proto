@@ -1,0 +1,30 @@
+// Game definitions for tournament competitions.
+// Manages video game metadata, descriptions, and associated images.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "models/image.proto";
+
+// Game represents a video game that can be played in tournaments.
+// Contains metadata and visual assets for the game.
+// Next id: 5
+message Game {
+  // Unique identifier for the game (UUID v7).
+  string id = 1;
+  // Display name of the game (e.g., "Super Smash Bros. Melee").
+  string name = 2;
+  // Description of the game and its competitive scene.
+  string description = 3;
+  // Images associated with the game (logos, artwork, etc.).
+  repeated Image images = 4;
+}
+
+// GameMutation updates mutable fields of a game.
+message GameMutation {
+  // Updated display name for the game.
+  string name = 1;
+}

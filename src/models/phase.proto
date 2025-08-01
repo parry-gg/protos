@@ -1,0 +1,75 @@
+// Tournament phase management for competition stages.
+// Phases represent different stages of competition (pools, brackets, top-8, etc.).
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "models/bracket.proto";
+
+// PhaseState represents the current execution state of a tournament phase.
+enum PhaseState {
+  // Default unspecified state.
+  PHASE_STATE_UNSPECIFIED = 0;
+  // Phase created but not yet ready for competition.
+  PHASE_STATE_PENDING = 1;
+  // Phase is seeded and ready for matches.
+  PHASE_STATE_READY = 2;
+  // Phase has active matches in progress.
+  PHASE_STATE_IN_PROGRESS = 3;
+  // All phase matches completed.
+  PHASE_STATE_COMPLETED = 4;
+}
+
+// Phase represents a stage of competition within an event.
+// Contains one or more brackets and defines the competition format.
+// Next id: 9
+message Phase {
+  reserved 2;
+  // Unique identifier for the phase (UUID v7).
+  string id = 1;
+  // Brackets that make up this phase.
+  repeated Bracket brackets = 3;
+  // Whether entrants start in this phase by default.
+  bool default_entry = 4;
+  // Type of bracket structure used in this phase.
+  parrygg.models.BracketType bracket_type = 5;
+  // Display name for the phase (e.g., "Pools", "Top 8").
+  string name = 6;
+  // Current execution state.
+  PhaseState state = 7;
+  // URL-friendly identifier.
+  string slug = 8;
+}
+
+// PhaseMutation updates mutable fields of a phase.
+// Subset of Phase with fields that may be mutated by a request.
+message PhaseMutation {
+  reserved 1;
+  // Updated bracket type for the phase.
+  optional parrygg.models.BracketType bracket_type = 2;
+  // Updated display name.
+  optional string name = 3;
+}
+
+// PhaseSlugId provides slug-based identification for phases.
+message PhaseSlugId {
+  // URL slug of the parent tournament.
+  string tournament_slug = 1;
+  // URL slug of the parent event.
+  string event_slug = 2;
+  // URL slug of the phase.
+  string phase_slug = 3;
+}
+
+// PhaseIdentifier allows referencing a phase by ID or slug path.
+message PhaseIdentifier {
+  oneof identifier {
+    // Direct phase ID lookup.
+    string id = 1;
+    // Slug-based path lookup.
+    PhaseSlugId slug_id = 2;
+  }
+}

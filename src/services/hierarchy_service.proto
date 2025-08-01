@@ -1,0 +1,54 @@
+// Tournament hierarchy navigation service.
+// Provides path-based navigation and breadcrumb generation for tournament structures.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/hierarchy.proto";
+
+message GetEventHierarchyRequest {
+  oneof identifier {
+    string event_id = 1;
+    models.EventSlugPath event_slug_path = 2;
+  }
+}
+
+message GetEventHierarchyResponse {
+  parrygg.models.Hierarchy hierarchy = 1;
+}
+
+message GetPhaseHierarchyRequest {
+  oneof identifier {
+    string phase_id = 1;
+    models.PhaseSlugPath phase_slug_path = 2;
+  }
+}
+
+message GetPhaseHierarchyResponse {
+  parrygg.models.Hierarchy hierarchy = 1;
+}
+
+message GetBracketHierarchyRequest {
+  oneof identifier {
+    string bracket_id = 1;
+    models.BracketSlugPath bracket_slug_path = 2;
+  }
+}
+
+message GetBracketHierarchyResponse {
+  parrygg.models.Hierarchy hierarchy = 1;
+}
+
+service HierarchyService {
+  // Retrieves the complete hierarchy structure for an event by ID or slug path.
+  rpc GetEventHierarchy (GetEventHierarchyRequest) returns (GetEventHierarchyResponse) {}
+  
+  // Retrieves the complete hierarchy structure for a phase by ID or slug path.
+  rpc GetPhaseHierarchy (GetPhaseHierarchyRequest) returns (GetPhaseHierarchyResponse) {}
+  
+  // Retrieves the complete hierarchy structure for a bracket by ID or slug path.
+  rpc GetBracketHierarchy (GetBracketHierarchyRequest) returns (GetBracketHierarchyResponse) {}
+}

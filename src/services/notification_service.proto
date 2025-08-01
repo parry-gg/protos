@@ -1,0 +1,23 @@
+// Push notification management service.
+// Handles Firebase Cloud Messaging tokens, preferences, and notification delivery.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+import "models/notification.proto";
+
+package parrygg.services;
+
+message GetNotificationsRequest {
+  string user_id = 1;
+}
+
+message GetNotificationsResponse {
+  repeated parrygg.models.Notification notifications = 1;;
+}
+
+service NotificationService {
+  // Retrieves all notifications for a user.
+  rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse) {}
+  
+}

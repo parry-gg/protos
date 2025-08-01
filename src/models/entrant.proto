@@ -1,0 +1,64 @@
+// Tournament entrant and participant management.
+// Handles individual participants and teams registering for tournament events.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "models/request.proto";
+import "models/user.proto";
+
+// Entrant represents a participant in tournaments (individual or team).
+// Groups one or more users together as a competitive unit.
+message Entrant {
+  // Unique identifier for the entrant (UUID v7).
+  string id = 1;
+  // Users that make up this entrant (1 for singles, 2+ for teams).
+  repeated User users = 2;
+}
+
+// EventEntrant represents an entrant's participation in a specific event.
+// Links an entrant to an event with registration details and team requests.
+message EventEntrant {
+  // ID of the event this entrant is registered for.
+  string event_id = 1;
+  // The entrant information (users, etc.).
+  Entrant entrant = 2;
+  // Display name for this entrant in the event.
+  string name = 3;
+  // Unique identifier for this event entrant registration (UUID v7).
+  string id = 4;
+  // Pending teammate requests for team formation.
+  repeated parrygg.models.TeammateRequest teammate_requests = 5;
+}
+
+// EventEntrantMutation updates mutable fields of an event entrant.
+// Subset of EventEntrant with fields that may be mutated by a request.
+message EventEntrantMutation {
+  // Updated display name for the entrant.
+  optional string name = 1;
+}
+
+// TeamMutation updates team composition and metadata.
+message TeamMutation {
+  // Updated list of user IDs that make up the team.
+  repeated string user_ids = 1;
+  // Updated team display name.
+  optional string name = 2;
+}
+
+// Placement represents final standings for an entrant in a completed event.
+// Contains ranking and match record information.
+// Next id: 5
+message Placement {
+  // The entrant this placement applies to.
+  EventEntrant event_entrant = 1;
+  // Final ranking in the event (1st, 2nd, 3rd, etc.).
+  int32 placement = 2;
+  // Total number of matches won.
+  int32 wins = 3;
+  // Total number of matches lost.
+  int32 losses = 4;
+}

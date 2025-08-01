@@ -1,0 +1,68 @@
+// Tournament hierarchy and navigation structures.
+// Provides path-based navigation through tournament/event/phase/bracket hierarchies.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// PathType defines the type of entity in a tournament hierarchy.
+enum PathType {
+  // Tournament level (top level).
+  PATH_TYPE_TOURNAMENT = 0;
+  // Event level within a tournament.
+  PATH_TYPE_EVENT = 1;
+  // Phase level within an event.
+  PATH_TYPE_PHASE = 2;
+  // Bracket level within a phase.
+  PATH_TYPE_BRACKET = 3;
+}
+
+// Path represents a single level in the tournament hierarchy.
+message Path {
+  // Unique identifier for this path element.
+  string id = 1;
+  // Type of hierarchy level this path represents.
+  PathType type = 2;
+  // Display name for this path element.
+  string name = 3;
+  // URL-friendly slug for this path element.
+  string slug = 4;
+}
+
+// EventSlugPath provides slug-based identification for events.
+message EventSlugPath {
+  // URL slug of the parent tournament.
+  string tournament_slug = 1;
+  // URL slug of the event.
+  string event_slug = 2;
+}
+
+// PhaseSlugPath provides slug-based identification for phases.
+message PhaseSlugPath {
+  // URL slug of the parent tournament.
+  string tournament_slug = 1;
+  // URL slug of the parent event.
+  string event_slug = 2;
+  // URL slug of the phase.
+  string phase_slug = 3;
+}
+
+// BracketSlugPath provides slug-based identification for brackets.
+message BracketSlugPath {
+  // URL slug of the parent tournament.
+  string tournament_slug = 1;
+  // URL slug of the parent event.
+  string event_slug = 2;
+  // URL slug of the parent phase.
+  string phase_slug = 3;
+  // URL slug of the bracket.
+  string bracket_slug = 4;
+}
+
+// Hierarchy represents a complete navigation path through tournament structure.
+message Hierarchy {
+  // Ordered path elements from tournament down to target entity.
+  repeated Path paths = 1;
+}

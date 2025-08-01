@@ -1,0 +1,74 @@
+// Tournament management service.
+// Provides CRUD operations, registration management, and tournament administration.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/tournament.proto";
+import "models/image.proto";
+import "models/filter.proto";
+
+// Next id: 4
+message GetTournamentRequest {
+  oneof identifier {
+    string id = 1;
+    string tournament_slug = 2;
+  }
+  parrygg.models.TournamentIdentifier tournament_identifier = 3;
+}
+
+message GetTournamentResponse {
+  parrygg.models.Tournament tournament = 1;
+}
+
+// Next id: 4
+message UpdateTournamentRequest {
+  string id = 1;
+  parrygg.models.TournamentIdentifier tournament_identifier = 3;
+  parrygg.models.TournamentMutation tournament = 2;
+}
+
+message UpdateTournamentResponse {
+  parrygg.models.Tournament Tournament = 1;
+}
+
+message GetTournamentsOptions {
+  bool return_permissions = 1;
+}
+
+message GetTournamentsRequest {
+  parrygg.models.TournamentsFilter filter = 1;
+  GetTournamentsOptions options = 2;
+}
+
+message GetTournamentsResponse {
+  repeated parrygg.models.Tournament tournaments = 1;
+  map<string, parrygg.models.TournamentPermissionsMetadata> tournament_permissions = 2; // Maps from tournament ID to permission
+}
+
+message GetTournamentAttendeesRequest {
+  string tournament_id = 1;
+  parrygg.models.TournamentIdentifier tournament_identifier = 2;
+}
+
+message GetTournamentAttendeesResponse {
+  repeated parrygg.models.TournamentAttendee attendees = 1;
+}
+
+service TournamentService {
+  // Retrieves a tournament by ID or slug.
+  rpc GetTournament (GetTournamentRequest) returns (GetTournamentResponse) {}
+  
+  // Retrieves multiple tournaments based on filter criteria.
+  rpc GetTournaments (GetTournamentsRequest) returns (GetTournamentsResponse) {}
+  
+  // Retrieves all attendees for a tournament.
+  rpc GetTournamentAttendees (GetTournamentAttendeesRequest) returns (GetTournamentAttendeesResponse) {}
+  
+  // Updates an existing tournament by ID.
+  rpc UpdateTournament (UpdateTournamentRequest) returns (UpdateTournamentResponse) {}
+
+}

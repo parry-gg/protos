@@ -1,0 +1,136 @@
+// Tournament event definitions and related data structures.
+// Events represent individual competitions within tournaments (e.g., "Melee Singles", "Ultimate Doubles").
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/timestamp.proto";
+import "models/entrant.proto";
+import "models/game.proto";
+import "models/hierarchy.proto";
+import "models/phase.proto";
+
+// EventState represents the current lifecycle state of a tournament event.
+enum EventState {
+  // Default unspecified state.
+  EVENT_STATE_UNSPECIFIED = 0;
+  // Event has been created but is not yet ready for registration or competition.
+  EVENT_STATE_PENDING = 1;
+  // Event is ready for registration and competition.
+  EVENT_STATE_READY = 2;
+  // Event is currently in progress with active matches.
+  EVENT_STATE_IN_PROGRESS = 3;
+  // Event has been completed with final results.
+  EVENT_STATE_COMPLETED = 4;
+}
+
+// Event represents a single competition within a tournament.
+// Events contain phases (pools, brackets, etc.) and track participant registration.
+// Next id: 15
+message Event {
+  // Unique identifier for the event (UUID v7).
+  string id = 1;
+  // ID of the tournament this event belongs to.
+  string tournament_id = 2;
+  // Display name of the event (e.g., "Melee Singles").
+  string name = 3;
+  // Markdown-formatted description of the event.
+  string description_md = 4;
+  // When the event is scheduled to start.
+  google.protobuf.Timestamp start_date = 5;
+  // Deadline for registration to close.
+  google.protobuf.Timestamp registration_close_time = 6;
+  // Entry fee in cents (USD).
+  int32 price = 7;
+  // Maximum number of entrants allowed (0 = unlimited).
+  int32 entrant_cap = 8;
+
+  // How many users make up a single entrant? 1 = singles 2+ = teams
+  int32 entrant_size = 9;
+
+  // The game being played in this event.
+  Game game = 10;
+  // Competition phases (pools, bracket stages, etc.).
+  repeated Phase phases = 11;
+  // Current lifecycle state of the event.
+  EventState state = 12;
+  // URL-friendly identifier for the event.
+  string slug = 13;
+
+  // Number of entrants registered for this event
+  int32 entrant_count = 14;
+}
+
+// EventMutation contains fields that can be updated on an existing event.
+// All fields are optional - only specified fields will be updated.
+// Next id: 9
+message EventMutation {
+  // Updated display name for the event.
+  optional string name = 1;
+  // Updated markdown description.
+  optional string description_md = 2;
+  // Updated start time.
+  optional google.protobuf.Timestamp start_date = 3;
+  // Updated registration deadline.
+  optional google.protobuf.Timestamp registration_close_time = 4;
+  // Updated entry fee in cents.
+  optional int32 price = 5;
+  // Updated maximum entrant limit.
+  optional int32 entrant_cap = 6;
+  // Updated team size requirement.
+  optional int32 entrant_size = 7;
+  // Updated game ID.
+  optional string game_id = 8;
+}
+
+// EventRegistration tracks a user's registration status for a specific event.
+message EventRegistration {
+    // ID of the event being registered for.
+    string event_id = 1;
+    // ID of the user registering.
+    string user_id = 2;
+    // Whether the user has paid the entry fee.
+    bool paid_event_fee = 3;
+    // Whether the user is currently registered.
+    bool registered = 4;
+    // The entrant information for this registration.
+    EventEntrant event_entrant = 5;
+}
+
+// EventAttendance represents public information about a user's participation in an event.
+// Used in TournamentAttendee; should hold any fields we'd want to display publicly about a user's event registration (e.g. their teammate)
+message EventAttendance {
+  // ID of the event the user is attending.
+  string event_id = 1;
+}
+
+// EventRegistrationMutation updates registration status for a specific event.
+// Subset of EventRegistration with both the id of the event to mutate and the fields that may be mutated by a request.
+// Includes id since, unlike other Mutation objects, multiple EventRegistrations may be packaged together connected to different events.
+message EventRegistrationMutation {
+  // ID of the event to update registration for.
+  string event_id = 1;
+  // Updated payment status.
+  optional bool paid_event_fee = 2;
+  // Updated registration status.
+  optional bool registered = 3;
+}
+
+// EventRegistrationDeletion specifies an event registration to remove.
+message EventRegistrationDeletion {
+  // ID of the event to unregister from.
+  string event_id = 1;
+}
+
+// EventIdentifier allows referencing an event by ID or slug path.
+message EventIdentifier {
+  oneof identifier {
+    // Direct event ID lookup.
+    string id = 1;
+    // Slug-based path lookup (tournament/event).
+    parrygg.models.EventSlugPath event_slug_path = 2;
+  }
+}

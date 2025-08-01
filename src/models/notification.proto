@@ -1,0 +1,68 @@
+// Push notification system for tournament updates and alerts.
+// Manages Firebase Cloud Messaging tokens and notification delivery tracking.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+import "google/protobuf/timestamp.proto";
+import "models/request.proto";
+
+package parrygg.models;
+
+// NotificationType categorizes notifications by recipient role and content.
+enum NotificationType {
+  // Default unspecified notification type.
+  NOTIFICATION_TYPE_UNSPECIFIED = 0;
+  // Account-related notifications (security, profile, etc.).
+  NOTIFICATION_TYPE_ACCOUNT = 1;
+  // Notifications for tournament organizers.
+  NOTIFICATION_TYPE_ORGANIZER = 2;
+  // Notifications for tournament attendees.
+  NOTIFICATION_TYPE_ATTENDEE = 3;
+  // Notifications for active competitors.
+  NOTIFICATION_TYPE_ENTRANT = 4;
+  // Notifications for spectators and viewers.
+  NOTIFICATION_TYPE_SPECTATOR = 5;
+}
+
+// NotificationPreference controls user's notification delivery preferences.
+message NotificationPreference {
+  // Type of notification this preference applies to.
+  NotificationType type = 1;
+  // Whether notifications of this type are enabled.
+  bool enabled = 2;
+}
+
+// DeliveryState tracks the delivery status of individual notifications.
+enum DeliveryState {
+  // Default unspecified delivery state.
+  DELIVERY_STATE_UNSPECIFIED = 0;
+  // Notification created but not yet sent.
+  DELIVERY_STATE_UNSENT = 1;
+  // Notification sent to FCM service.
+  DELIVERY_STATE_SENT = 2;
+  // Notification received by client device.
+  DELIVERY_STATE_RECEIVED = 3;
+  // Notification dismissed by user.
+  DELIVERY_STATE_DISMISSED = 4;
+  // Notification viewed/read by user.
+  DELIVERY_STATE_SEEN = 5;
+}
+
+// Notification represents a push notification sent to a user.
+message Notification {
+  // Unique identifier for the notification (UUID v7).
+  string id = 1;
+  // The notification message content.
+  string body = 2;
+  // Current delivery status.
+  DeliveryState delivery_state = 3;
+  // Associated request that triggered this notification.
+  Request request = 4;
+}
+
+// NotificationMutation updates notification delivery status.
+message NotificationMutation {
+  // Updated delivery state.
+  DeliveryState delivery_state = 1;
+}
