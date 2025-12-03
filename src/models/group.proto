@@ -1,0 +1,35 @@
+// Authorization group and permission management.
+// Defines hierarchical permission structures for tournament administration.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// Permission defines authorization levels within groups.
+enum Permission {
+  // Default unspecified permission.
+  PERMISSION_UNSPECIFIED = 0;
+  // Basic member access with limited privileges.
+  PERMISSION_MEMBER = 1;
+  // Manager access with administrative privileges.
+  PERMISSION_MANAGER = 2;
+  // Owner access with full control.
+  PERMISSION_OWNER = 3;
+}
+
+// MemberType defines the type of entity that can be a group member.
+enum MemberType {
+  // Default unspecified member type.
+  MEMBER_TYPE_UNSPECIFIED = 0;
+  // Individual user member.
+  MEMBER_TYPE_USER = 1;
+  // Nested group member (group within group).
+  MEMBER_TYPE_GROUP = 2;
+}
+
+// Group represents a collection of users and permissions.
+// Not yet implemented
+message Group {}
+

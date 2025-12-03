@@ -1,0 +1,27 @@
+// Filtering criteria for tournament and event queries.
+// Provides search and filtering capabilities for retrieving specific subsets of data.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/struct.proto";
+
+message PaginationRequest {
+  // Number of items to return per page.
+  // If omitted or zero, the server applies a sane default.
+  uint32 page_size = 1;
+
+  // Optional cursor token (Struct) returned by the server.
+  google.protobuf.Struct cursor = 2;
+}
+
+message PaginationResponse {
+  // The cursor token for fetching the *next* page.
+  google.protobuf.Struct next_cursor = 1;
+
+  // Boolean for whether there are more pages of available items.
+  bool has_more = 2;
+}

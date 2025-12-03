@@ -8,7 +8,11 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 import "models/entrant.proto";
+import "models/progression.proto";
+import "models/hierarchy.proto";
+import "models/game.proto";
 
 // BracketType defines the format for the bracket.
 enum BracketType {
@@ -37,7 +41,7 @@ enum BracketState {
 }
 
 // Bracket represents a tournament bracket containing matches and seeding.
-// Next id: 12
+// Next id: 13
 message Bracket {
   // Unique identifier for the bracket (UUID v7).
   string id = 1;
@@ -61,6 +65,8 @@ message Bracket {
   string checksum = 10;
   // Bracket type.
   BracketType type = 11;
+  // Seeds in future phases which progressed from this bracket.
+  repeated Seed progressed_seeds = 12;
 }
 
 
@@ -80,7 +86,7 @@ enum MatchState {
 
 // Match represents an individual game between participants in a bracket.
 // Contains participant slots, scoring, and progression information.
-// Next id: 15
+// Next id: 16
 message Match {
   // Unique identifier for the match (UUID v7).
   string id = 1;
@@ -106,6 +112,50 @@ message Match {
   repeated Slot slots = 13;
   // When the match state was last updated.
   google.protobuf.Timestamp state_updated_at = 14;
+  // Individual games within this match.
+  repeated MatchGame match_games = 15;
+}
+
+// MatchGame represents an individual game within a match set.
+// Contains stage selection and slots for per-game scoring.
+// Next id: 5
+message MatchGame {
+  // Unique identifier for the match game (UUID v7).
+  string id = 1;
+  // Ordering index within the parent match (0-indexed).
+  int32 index = 2;
+  // Stages played in this game.
+  repeated Stage stages = 3;
+  // Per-game slots with scoring and participant details.
+  repeated MatchGameSlot slots = 4;
+}
+
+// GameSlot represents a participant's performance in a single game.
+// Contains per-game scoring, state, and user participation details.
+// Next id: 6
+message MatchGameSlot {
+  // Unique identifier for the game slot (UUID v7).
+  string id = 1;
+  // The slot number within the match (0-indexed).
+  int32 slot = 2;
+  // The participant's score in this specific game.
+  double score = 3;
+  // Current state of this slot in this game.
+  optional SlotState state = 4;
+  // Users participating in this slot for this game.
+  repeated MatchGameParticipant participants = 5;
+}
+
+// GameParticipant represents a user's participation in a game slot.
+// Contains character selections for team-based games.
+// Next id: 4
+message MatchGameParticipant {
+  // Unique identifier for the game participant (UUID v7).
+  string id = 1;
+  // ID of the user participating.
+  string user_id = 2;
+  // Characters used by this user in this game.
+  repeated Character characters = 3;
 }
 
 // MatchResult contains the scoring updates for a completed match.
@@ -122,40 +172,6 @@ message MatchResultSlotMutation {
   optional double score = 2;
   // The participant's final state (completed, DQ, etc.).
   optional SlotState state = 3;
-}
-
-// ProgressionBehavior controls how participants advance between brackets.
-enum ProgressionBehavior {
-  // Default unspecified behavior.
-  PROGRESSION_BEHAVIOR_UNSPECIFIED = 0;
-  // Natural progression based on match results.
-  PROGRESSION_BEHAVIOR_NATURAL = 1;
-  // Advance to winners side.
-  PROGRESSION_BEHAVIOR_FORCE_WINNERS = 2;
-  // Advance  to losers side.
-  PROGRESSION_BEHAVIOR_FORCE_LOSERS = 3;
-}
-
-// Progression defines how participants advance between tournament phases.
-// Controls movement from one bracket/phase to another based on placement.
-// Next id: 9
-message Progression {
-  // Unique identifier for the progression rule (UUID v7).
-  string id = 1;
-  // ID of the match this progression applies to.
-  string match_id = 2;
-  // ID of the target phase participants advance to.
-  string target_phase_id = 3;
-  // ID of the target seed position in the next phase.
-  string seed_id = 4;
-  // Required placement in the origin match (1st, 2nd, etc.).
-  int32 origin_placement = 5;
-  // Projected seed number in the origin phase.
-  int32 origin_seed = 6;
-  // Whether this progression is for the match winner.
-  bool match_winner = 7;
-  // Whether advancement is to the winners side.
-  bool winners_side = 8;
 }
 
 // SlotState represents the current status of a participant slot in a match.
@@ -190,7 +206,7 @@ message Slot {
 
 // Seed represents a seeded position in a tournament bracket.
 // Links a participant to their initial bracket position.
-// Next id: 4
+// Next id: 6
 message Seed {
   // Unique identifier for the seed (UUID v7).
   string id = 1;
@@ -198,12 +214,73 @@ message Seed {
   int32 seed = 2;
   // The participant assigned to this seed.
   EventEntrant event_entrant = 3;
+  // The index of this seed's bracket within its phase
+  int32 bracket_index = 4;
+  // The progression which assigns an entrant to this seed in a multiphase bracket.
+  Progression progression = 5;
 }
 
 // SeedMutation updates the seed number of an existing seed.
 message SeedMutation {
   // Updated seed number for bracket positioning.
   optional int32 seed = 2;
+  // Whether the update should only affect seeds in the specified seed's current bracket.
+  optional bool bracket_only = 3;
+}
+
+// MatchGameMutation updates an existing match game or creates a new one.
+// Contains only updatable fields - no id or read-only data.
+// Next id: 4
+message MatchGameMutation {
+  // Index for ordering within the match (0-indexed). Required.
+  int32 index = 1;
+  // Stages selected for this game with optional variant metadata.
+  repeated StageSelection stages = 2;
+  // Per-game slot data with scores and participant details.
+  repeated GameSlotMutation slots = 3;
+}
+
+// StageSelection specifies a stage played with optional variant data.
+// Next id: 3
+message StageSelection {
+  // Slug of the stage (e.g., "final-destination", "battlefield").
+  string stage_slug = 1;
+  // Optional variant metadata (e.g., {"form": "battlefield", "hazards": "off"}).
+  // Stored as JSONB, merged into stages array.
+  optional google.protobuf.Struct variant = 2;
+}
+
+// GameSlotMutation updates a slot within a match game.
+// Next id: 5
+message GameSlotMutation {
+  // The slot number (0-indexed, must correspond to parent match slot).
+  int32 slot = 1;
+  // Per-game score for this slot.
+  optional double score = 2;
+  // Per-game state for this slot.
+  optional SlotState state = 3;
+  // Participant data including character selections.
+  repeated GameParticipantMutation participants = 4;
+}
+
+// GameParticipantMutation updates a user's participation in a game slot.
+// Next id: 3
+message GameParticipantMutation {
+  // ID of the user participating in this game.
+  // Must be a member of the entrant assigned to this match slot.
+  string user_id = 1;
+  // Characters selected by this user with optional variant metadata.
+  repeated CharacterSelection characters = 2;
+}
+
+// CharacterSelection specifies a character used with optional variant data.
+// Next id: 3
+message CharacterSelection {
+  // Slug of the character (e.g., "mario", "fox", "ken").
+  string character_slug = 1;
+  // Optional variant metadata (e.g., {"color": 2, "costume": "alt"}).
+  // Stored as JSONB, merged into characters array.
+  optional google.protobuf.Struct variant = 2;
 }
 
 // BracketSlugId provides slug-based identification for brackets.
@@ -217,4 +294,20 @@ message BracketSlugId {
   string phase_slug = 3;
   // URL slug of the bracket.
   string bracket_slug = 4;
+}
+
+// MatchContext provides a match with tournament and bracket metadata for UI display.
+message MatchContext {
+  // The match information.
+  Match match = 1;
+  // Tournament hierarchy path (tournament/event/phase/bracket).
+  parrygg.models.Hierarchy hierarchy = 2;
+  // Event start time.
+  google.protobuf.Timestamp event_start_date = 3;
+  // Bracket progress (0.0 to 1.0, representing percentage of completed matches).
+  float bracket_progress = 4;
+  // Seeds with entrant information for all participants in this match.
+  repeated Seed seeds = 5;
+  // The game being played in this match (e.g., Street Fighter, Smash Bros).
+  Game game = 6;
 }

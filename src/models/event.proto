@@ -134,3 +134,30 @@ message EventIdentifier {
     parrygg.models.EventSlugPath event_slug_path = 2;
   }
 }
+
+// Placement represents final standings for an entrant in a completed event.
+// Contains ranking and match record information.
+// Next id: 6
+message Placement {
+  // The entrant this placement applies to.
+  EventEntrant event_entrant = 1;
+  // Final ranking in the event (1st, 2nd, 3rd, etc.).
+  int32 placement = 2;
+  // Total number of matches won.
+  int32 wins = 3;
+  // Total number of matches lost.
+  int32 losses = 4;
+  // The entrant's overall seed in the event.
+  int32 seed = 5;
+}
+
+// EntrantResult describes a single Entrant's performance in a completed event.
+// Next id: 4
+message EntrantResult {
+  // The entrant's final placement
+  parrygg.models.Placement placement = 1;
+  // The entrant's match results, organized by phase and bracket.
+  repeated parrygg.models.Phase phases = 2;
+  // The ID of the event in question, for identification.
+  string event_id = 3;
+}

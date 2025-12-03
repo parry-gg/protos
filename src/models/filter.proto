@@ -7,6 +7,8 @@ option java_package = "gg.parry.grpc.models";
 
 package parrygg.models;
 
+import "models/bracket.proto";
+
 // EventsFilter specifies criteria for filtering tournament events.
 // Next id: 2
 message EventsFilter {
@@ -15,7 +17,7 @@ message EventsFilter {
 }
 
 // TournamentsFilter specifies criteria for filtering tournaments.
-// Next id: 3
+// Next id: 6
 message TournamentsFilter {
   // Filter tournaments by a specific user's participation.
   optional string user_id = 1;
@@ -23,12 +25,20 @@ message TournamentsFilter {
   optional string owner_id = 2;
   // Filter tournaments by administrative permissions.
   optional AdminFilter admin_filter = 3;
+  // Fuzzy match against tournament names.
+  optional string name = 4;
+  // Filter tournaments by custom slug (matches all tournaments sharing this custom slug).
+  optional string custom_slug = 5;
 }
 
 // UsersFilter specifies criteria for searching users.
 message UsersFilter {
   // Fuzzy match against user gamer tags.
   optional string gamer_tag = 1;
+  // Filter users to only those in a certain event
+  optional string event_id = 2;
+  // Whether to include users who aren't connected to an account (excluded by default)
+  optional bool include_anonymous_users = 3;
 }
 
 // AdminFilterPermission defines administrative permission levels for filtering.
@@ -50,4 +60,14 @@ message AdminFilter {
   string user_id = 1;
   // Minimum permission level required.
   AdminFilterPermission permission = 2;
+}
+
+// MatchesFilter specifies criteria for filtering matches.
+message MatchesFilter {
+  // Filter matches by a specific user's participation.
+  optional string user_id = 1;
+  // Filter matches by a specific entrant's participation.
+  optional string entrant_id = 2;
+  // Filter matches by their current state.
+  optional MatchState state = 3;
 }

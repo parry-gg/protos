@@ -1,0 +1,25 @@
+// Progression group settings management service.
+// Provides CRUD operations for phase progression group settings.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/progression.proto";
+import "models/phase.proto";
+
+message GetProgressionGroupSettingsRequest {
+  string id = 1;
+}
+
+message GetProgressionGroupSettingsResponse {
+  parrygg.models.ProgressionGroupSettings progression_group_settings = 1;
+}
+
+service ProgressionGroupSettingsService {
+  // Retrieves progression group settings by ID.
+  rpc GetProgressionGroupSettings (GetProgressionGroupSettingsRequest) returns (GetProgressionGroupSettingsResponse) {}
+
+}

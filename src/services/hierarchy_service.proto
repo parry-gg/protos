@@ -7,6 +7,7 @@ option java_package = "gg.parry.grpc.services";
 
 package parrygg.services;
 
+import "models/event.proto";
 import "models/hierarchy.proto";
 
 message GetEventHierarchyRequest {
@@ -42,6 +43,16 @@ message GetBracketHierarchyResponse {
   parrygg.models.Hierarchy hierarchy = 1;
 }
 
+message GetAllBracketHierarchiesRequest {
+  oneof identifier {
+    parrygg.models.EventIdentifier event_identifier = 1;
+  }
+}
+
+message GetAllBracketHierarchiesResponse {
+  repeated parrygg.models.Hierarchy hierarchies = 1;
+}
+
 service HierarchyService {
   // Retrieves the complete hierarchy structure for an event by ID or slug path.
   rpc GetEventHierarchy (GetEventHierarchyRequest) returns (GetEventHierarchyResponse) {}
@@ -51,4 +62,7 @@ service HierarchyService {
   
   // Retrieves the complete hierarchy structure for a bracket by ID or slug path.
   rpc GetBracketHierarchy (GetBracketHierarchyRequest) returns (GetBracketHierarchyResponse) {}
+
+  // Retrieves the hierarchy structures to access all brackets within an event.
+  rpc GetAllBracketHierarchies (GetAllBracketHierarchiesRequest) returns (GetAllBracketHierarchiesResponse) {}
 }

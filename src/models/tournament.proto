@@ -10,7 +10,7 @@ package parrygg.models;
 import "google/protobuf/timestamp.proto";
 import "models/image.proto";
 import "models/event.proto";
-
+import "models/group.proto";
 import "models/slug.proto";
 import "models/user.proto";
 
@@ -40,9 +40,21 @@ enum TournamentPermission {
   PERMISSION_LEVEL_REPORTER = 3;
 }
 
+// VisibilityLevel determines who can view and access a tournament.
+enum VisibilityLevel {
+  // Unspecified visibility level.
+  VISIBILITY_LEVEL_UNSPECIFIED = 0;
+  // Public tournaments have no restrictions, and can be seen by anyone.
+  VISIBILITY_LEVEL_PUBLIC = 1;
+  // Link-Only tournaments can be opened from a direct link, but will not appear in searches or lists.
+  VISIBILITY_LEVEL_LINK_ONLY = 2;
+  // Hidden tournaments can only be seen by their admins and competitors.
+  VISIBILITY_LEVEL_HIDDEN = 3;
+}
+
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 19
+// Next id: 20
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -76,11 +88,13 @@ message Tournament {
   int32 venue_fee = 17;
   // Time zone for tournament scheduling (e.g., "America/New_York").
   string time_zone = 18;
+  // Visibility status of this tournament.
+  VisibilityLevel visibility_level = 19;
 }
 
 // TournamentMutation updates mutable fields of a tournament.
 // Subset of Tournament with fields that may be mutated by a request.
-// Next id: 13
+// Next id: 14
 message TournamentMutation {
   // Updated tournament name.
   optional string name = 1;
@@ -102,6 +116,8 @@ message TournamentMutation {
   optional int32 venue_fee = 11;
   // Updated time zone.
   optional string time_zone = 12;
+  // Updated visibility status.
+  optional VisibilityLevel visibility_level = 13;
 }
 
 // PageContent represents custom content pages for tournaments.
@@ -170,6 +186,20 @@ message TournamentAttendee {
   parrygg.models.User user = 1;
   // Events the user is attending (without payment details).
   repeated parrygg.models.EventAttendance events = 2;
+}
+
+// TournamentAdmin represents administrative access information.
+// Publicly visible information about a user/group in the ADMINS group for a tournament.
+message TournamentAdmin {
+  // The administrative member (user or group).
+  oneof member {
+    // Individual user with admin access.
+    parrygg.models.User user = 1;
+    // Group with admin access.
+    parrygg.models.Group group = 2;
+  }
+  // Permission level for this admin.
+  parrygg.models.TournamentPermission permission = 3;
 }
 
 // TournamentIdentifier allows referencing a tournament by ID or slug.

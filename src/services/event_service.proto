@@ -11,18 +11,35 @@ import "models/event.proto";
 import "models/hierarchy.proto";
 import "models/filter.proto";
 import "models/entrant.proto";
+import "models/phase.proto";
 import "models/request.proto";
+import "models/event_export.proto";
 
 // GetEventRequest retrieves a single event by ID.
 message GetEventRequest {
   // Unique identifier of the event to retrieve.
   string id = 1;
+  parrygg.models.EventIdentifier identifier = 2;
+  GetEventOptions options = 3;
 }
 
 // GetEventResponse contains the requested event.
 message GetEventResponse {
   // The requested event.
   parrygg.models.Event event = 1;
+}
+
+enum EventView {
+  // Returns only the settings and identifiers for the event and its phases.
+  EVENT_VIEW_SETTINGS_ONLY = 0;
+  // Returns information about the event's phases, their brackets, and the seeds within + progressions between them.
+  EVENT_VIEW_BRACKET_SUMMARY = 1;
+}
+
+// Options passed to GetEvent.
+message GetEventOptions {
+  // Determines how much information should be returned about the event.
+  EventView event_view = 1;
 }
 
 // GetEventsRequest retrieves multiple events based on filter criteria.
@@ -62,6 +79,22 @@ message GetEventPlacementsResponse {
   repeated parrygg.models.Placement placements = 1;
 }
 
+// GetEntrantResultRequest retrieves information about a particular entrant or user's performance within an event.
+message GetEntrantResultRequest {
+  parrygg.models.EventIdentifier event_identifier = 1;
+  oneof entrant_identifier {
+    string entrant_id = 2;
+    string user_id = 3;
+  }
+}
+
+// GetEntrantResultResponse contains the entrant's results.
+message GetEntrantResultResponse {
+  parrygg.models.Placement placement = 1;
+  // The entrant's match results, organized by phase and bracket.
+  repeated parrygg.models.Phase phases = 2;
+}
+
 // GetEventEntrantsRequest retrieves all participants in an event.
 message GetEventEntrantsRequest {
   // Event to get entrants for.
@@ -87,5 +120,7 @@ service EventService {
   rpc GetEventEntrants (GetEventEntrantsRequest) returns (GetEventEntrantsResponse) {}
   // Reset event brackets and matches to initial state.
   rpc ResetEvent (ResetEventRequest) returns (ResetEventResponse) {}
-  
+  // Get detailed results information on a single entrant's performance within an event.
+  rpc GetEntrantResult (GetEntrantResultRequest) returns (GetEntrantResultResponse) {}
+
 }

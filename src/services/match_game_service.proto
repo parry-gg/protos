@@ -1,0 +1,61 @@
+// Match game management service for individual games within matches.
+// Provides operations for creating, updating, and deleting games with stage and participant data.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/bracket.proto";
+
+// CreateMatchGameRequest creates a new game within a match.
+message CreateMatchGameRequest {
+  // ID of the parent match to add the game to.
+  string match_id = 1;
+  // Game data including stages, slots, and participants.
+  parrygg.models.MatchGameMutation match_game = 2;
+}
+
+// CreateMatchGameResponse contains the created match game.
+message CreateMatchGameResponse {
+  // The newly created match game with full hierarchy.
+  parrygg.models.MatchGame match_game = 1;
+}
+
+// UpdateMatchGameRequest updates an existing match game.
+message UpdateMatchGameRequest {
+  // ID of the match game to update.
+  string id = 1;
+  // Updated game data including index, stages, slots, and participants.
+  parrygg.models.MatchGameMutation match_game = 2;
+}
+
+// UpdateMatchGameResponse contains the updated match game.
+message UpdateMatchGameResponse {
+  // The updated match game with full hierarchy.
+  parrygg.models.MatchGame match_game = 1;
+}
+
+// DeleteMatchGameRequest removes a match game.
+message DeleteMatchGameRequest {
+  // ID of the match game to delete.
+  string id = 1;
+}
+
+// DeleteMatchGameResponse contains the deleted match game.
+message DeleteMatchGameResponse {
+  // The deleted match game before removal.
+  parrygg.models.MatchGame match_game = 1;
+}
+
+// MatchGameService provides match game management operations.
+// Handles individual games within matches including stage selection and per-game scoring.
+service MatchGameService {
+  // Create a new game within a match.
+  rpc CreateMatchGame (CreateMatchGameRequest) returns (CreateMatchGameResponse) {}
+  // Update an existing match game's data.
+  rpc UpdateMatchGame (UpdateMatchGameRequest) returns (UpdateMatchGameResponse) {}
+  // Delete a match game from its parent match.
+  rpc DeleteMatchGame (DeleteMatchGameRequest) returns (DeleteMatchGameResponse) {}
+}

@@ -9,7 +9,7 @@ package parrygg.services;
 
 import "google/protobuf/timestamp.proto";
 import "models/bracket.proto";
-import "models/entrant.proto";
+import "models/event.proto";
 
 // GetBracketRequest retrieves a bracket by ID or slug path.
 message GetBracketRequest {

@@ -18,10 +18,25 @@ message GetGamesResponse {
   repeated parrygg.models.Game games = 1;
 }
 
+// GetGameRequest retrieves a single game with characters and stages.
+message GetGameRequest {
+  // The game ID to retrieve.
+  string game_id = 1;
+}
+
+// GetGameResponse contains the fully populated game.
+message GetGameResponse {
+  // The requested game with characters and stages populated.
+  parrygg.models.Game game = 1;
+}
+
 // GameService provides game management operations.
 // Handles game metadata, creation, and external database integration.
 service GameService {
   // List all available games for tournaments.
   rpc GetGames (GetGamesRequest) returns (GetGamesResponse) {}
-  
+
+  // Retrieve a single game with all characters and stages populated.
+  rpc GetGame (GetGameRequest) returns (GetGameResponse) {}
+
 }

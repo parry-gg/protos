@@ -8,6 +8,7 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "models/bracket.proto";
+import "models/progression.proto";
 
 // PhaseState represents the current execution state of a tournament phase.
 enum PhaseState {
@@ -25,7 +26,7 @@ enum PhaseState {
 
 // Phase represents a stage of competition within an event.
 // Contains one or more brackets and defines the competition format.
-// Next id: 9
+// Next id: 12
 message Phase {
   reserved 2;
   // Unique identifier for the phase (UUID v7).
@@ -42,6 +43,12 @@ message Phase {
   PhaseState state = 7;
   // URL-friendly identifier.
   string slug = 8;
+  // Number of brackets into which entrants will be placed in this phase.
+  int32 num_brackets = 9;
+  // Number of entrants in this phase across all brackets.
+  int32 num_entrants = 10;
+  // Progression settings outward from this phase.
+  repeated parrygg.models.ProgressionGroupSettings progression_group_settings = 11;
 }
 
 // PhaseMutation updates mutable fields of a phase.
@@ -52,6 +59,8 @@ message PhaseMutation {
   optional parrygg.models.BracketType bracket_type = 2;
   // Updated display name.
   optional string name = 3;
+  // Updated number of brackets in the phase.
+  optional int32 num_brackets = 4;
 }
 
 // PhaseSlugId provides slug-based identification for phases.

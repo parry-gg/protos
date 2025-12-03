@@ -32,6 +32,8 @@ message EventEntrant {
   string id = 4;
   // Pending teammate requests for team formation.
   repeated parrygg.models.TeammateRequest teammate_requests = 5;
+  // This entrant's initial seed in the event.
+  int32 seed = 6;
 }
 
 // EventEntrantMutation updates mutable fields of an event entrant.
@@ -47,18 +49,4 @@ message TeamMutation {
   repeated string user_ids = 1;
   // Updated team display name.
   optional string name = 2;
-}
-
-// Placement represents final standings for an entrant in a completed event.
-// Contains ranking and match record information.
-// Next id: 5
-message Placement {
-  // The entrant this placement applies to.
-  EventEntrant event_entrant = 1;
-  // Final ranking in the event (1st, 2nd, 3rd, etc.).
-  int32 placement = 2;
-  // Total number of matches won.
-  int32 wins = 3;
-  // Total number of matches lost.
-  int32 losses = 4;
 }

@@ -8,10 +8,11 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "models/image.proto";
+import "google/protobuf/struct.proto";
 
 // Game represents a video game that can be played in tournaments.
 // Contains metadata and visual assets for the game.
-// Next id: 5
+// Next id: 8
 message Game {
   // Unique identifier for the game (UUID v7).
   string id = 1;
@@ -21,10 +22,86 @@ message Game {
   string description = 3;
   // Images associated with the game (logos, artwork, etc.).
   repeated Image images = 4;
+  // URL-friendly slug for the game (e.g., "super-smash-bros-melee").
+  string slug = 5;
+  // All playable characters in this game with their variant images.
+  repeated Character characters = 6;
+  // All playable stages in this game with their variant images.
+  repeated Stage stages = 7;
 }
 
 // GameMutation updates mutable fields of a game.
 message GameMutation {
   // Updated display name for the game.
   string name = 1;
+}
+
+// CharacterImageType defines the purpose and display context for character images.
+enum CharacterImageType {
+  // Default unspecified character image type.
+  CHARACTER_IMAGE_TYPE_UNSPECIFIED = 0;
+  // Stock icon image for the character.
+  CHARACTER_IMAGE_TYPE_STOCK_ICON = 1;
+  // Portrait image for the character.
+  CHARACTER_IMAGE_TYPE_PORTRAIT = 2;
+}
+
+// CharacterImage represents an image associated with a character.
+// Next id: 4
+message CharacterImage {
+  // The image url.
+  string url = 1;
+  // Type classification for display purposes.
+  CharacterImageType type = 2;
+  // Variant metadata (e.g., costume/skin information).
+  google.protobuf.Struct variant = 3;
+}
+
+// Character represents a playable character in a game.
+// Next id: 6
+message Character {
+  // Unique identifier for the character (UUID v7).
+  string id = 1;
+  // Identifier of the game this character belongs to.
+  string game_id = 2;
+  // Display name of the character.
+  string name = 3;
+  // URL-friendly slug for the character (e.g., "doctor-mario").
+  string slug = 4;
+  // Images associated with the character (stock icons, portraits, etc.).
+  repeated CharacterImage images = 5;
+}
+
+// StageImageType defines the purpose and display context for stage images.
+enum StageImageType {
+  // Default unspecified stage image type.
+  STAGE_IMAGE_TYPE_UNSPECIFIED = 0;
+  // Thumbnail image for the stage.
+  STAGE_IMAGE_TYPE_THUMBNAIL = 1;
+}
+
+// StageImage represents an image associated with a stage.
+// Next id: 4
+message StageImage {
+  // The image url.
+  string url = 1;
+  // Type classification for display purposes.
+  StageImageType type = 2;
+  // Variant metadata (e.g., battlefield form, hazards on/off).
+  google.protobuf.Struct variant = 3;
+}
+
+// Stage represents a playable stage/level in a game.
+// Next id: 6
+message Stage {
+  // Unique identifier for the stage (UUID v7).
+  string id = 1;
+  // Identifier of the game this stage belongs to.
+  string game_id = 2;
+  // Display name of the stage.
+  string name = 3;
+  // URL-friendly slug for the stage (e.g., "final-destination").
+  string slug = 4;
+  // Images associated with the stage (thumbnails, etc.).
+  repeated StageImage images = 5;
 }

@@ -7,6 +7,7 @@ option java_package = "gg.parry.grpc.services";
 
 package parrygg.services;
 
+import "google/protobuf/timestamp.proto";
 import "models/tournament.proto";
 import "models/image.proto";
 import "models/filter.proto";
@@ -58,17 +59,32 @@ message GetTournamentAttendeesResponse {
   repeated parrygg.models.TournamentAttendee attendees = 1;
 }
 
+// Next id: 4
+message GetTournamentAdminsRequest {
+  string tournament_id = 1;
+  parrygg.models.TournamentIdentifier tournament_identifier = 3;
+  parrygg.models.AdminFilterPermission permission = 2;
+}
+
+message GetTournamentAdminsResponse {
+  repeated parrygg.models.TournamentAdmin admins = 1;
+}
+
+
 service TournamentService {
   // Retrieves a tournament by ID or slug.
   rpc GetTournament (GetTournamentRequest) returns (GetTournamentResponse) {}
-  
+
   // Retrieves multiple tournaments based on filter criteria.
   rpc GetTournaments (GetTournamentsRequest) returns (GetTournamentsResponse) {}
-  
+
   // Retrieves all attendees for a tournament.
   rpc GetTournamentAttendees (GetTournamentAttendeesRequest) returns (GetTournamentAttendeesResponse) {}
-  
+
   // Updates an existing tournament by ID.
   rpc UpdateTournament (UpdateTournamentRequest) returns (UpdateTournamentResponse) {}
+
+  // Retrieves administrators for a tournament with optional permission filtering.
+  rpc GetTournamentAdmins (GetTournamentAdminsRequest) returns (GetTournamentAdminsResponse) {}
 
 }

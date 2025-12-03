@@ -8,7 +8,7 @@ option java_package = "gg.parry.grpc.services";
 package parrygg.services;
 
 import "models/phase.proto";
-import "models/entrant.proto";
+import "models/event.proto";
 
 message GetPhaseRequest {
   oneof identifier {
@@ -39,8 +39,8 @@ message ResetPhaseResponse {
 service PhaseService {
   // Retrieves a phase by ID or slug identifier.
   rpc GetPhase (GetPhaseRequest) returns (GetPhaseResponse) {}
-  
+
   // Retrieves final placements for participants in a completed phase.
   rpc GetPhasePlacements (GetPhasePlacementsRequest) returns (GetPhasePlacementsResponse) {}
-  
+
 }

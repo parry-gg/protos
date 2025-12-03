@@ -1,0 +1,74 @@
+// Progression management from one phase to another.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// ProgressionBehavior controls how participants advance between brackets.
+enum ProgressionBehavior {
+  // Default unspecified behavior.
+  PROGRESSION_BEHAVIOR_UNSPECIFIED = 0;
+  // Natural progression based on match results.
+  PROGRESSION_BEHAVIOR_NATURAL = 1;
+  // Advance to winners side.
+  PROGRESSION_BEHAVIOR_FORCE_WINNERS = 2;
+  // Advance  to losers side.
+  PROGRESSION_BEHAVIOR_FORCE_LOSERS = 3;
+}
+
+// Progression defines how participants advance between tournament phases.
+// Controls movement from one bracket/phase to another based on placement.
+// Next id: 11
+message Progression {
+  // Unique identifier for the progression rule (UUID v7).
+  string id = 1;
+  // ID of the match this progression applies to.
+  string match_id = 2;
+  // ID of the target phase participants advance to.
+  string target_phase_id = 3;
+  // ID of the target seed position in the next phase.
+  string seed_id = 4;
+  // Required placement in the origin match (1st, 2nd, etc.).
+  int32 origin_placement = 5;
+  // Projected seed number in the origin phase.
+  int32 origin_seed = 6;
+  // Whether this progression is for the match winner.
+  bool match_winner = 7;
+  // Whether advancement is to the winners side.
+  bool winners_side = 8;
+  // ID of the bracket from which participants are progressing.
+  string origin_bracket_id = 9;
+  // ID of the bracket to which participants should progress.
+  string target_bracket_id = 10;
+}
+
+
+// ProgressionGroupSettings defines rules for advancing participants between phases.
+// Controls placement ranges, target phases, and advancement behavior.
+// Next id: 6
+message ProgressionGroupSettings {
+  // Unique identifier for the progression group settings (UUID v7).
+  string id = 1;
+  // Minimum placement required for progression (inclusive).
+  int32 min_placement = 2;
+  // Number of participants that progress from this group.
+  int32 num_progressing = 3;
+  // ID of the target phase participants advance to.
+  string target_phase_id = 4;
+  // Behavior controlling how participants advance.
+  ProgressionBehavior behavior = 5;
+}
+
+// ProgressionGroupSettingsMutation updates mutable fields of progression group settings.
+message ProgressionGroupSettingsMutation {
+  // Updated minimum placement required for progression.
+  optional int32 min_placement = 1;
+  // Updated number of participants that progress.
+  optional int32 num_progressing = 2;
+  // Updated target phase ID.
+  optional string target_phase_id = 3;
+  // Updated advancement behavior.
+  optional ProgressionBehavior behavior = 4;
+}
