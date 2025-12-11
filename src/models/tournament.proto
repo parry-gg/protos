@@ -8,6 +8,7 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "google/protobuf/timestamp.proto";
+import "models/address.proto";
 import "models/image.proto";
 import "models/event.proto";
 import "models/group.proto";
@@ -54,7 +55,7 @@ enum VisibilityLevel {
 
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 20
+// Next id: 21
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -90,6 +91,8 @@ message Tournament {
   string time_zone = 18;
   // Visibility status of this tournament.
   VisibilityLevel visibility_level = 19;
+  // Structured geocoded address information for the venue.
+  optional Address address = 20;
 }
 
 // TournamentMutation updates mutable fields of a tournament.

@@ -7,6 +7,7 @@ option java_package = "gg.parry.grpc.models";
 
 package parrygg.models;
 
+import "google/protobuf/timestamp.proto";
 import "models/bracket.proto";
 
 // EventsFilter specifies criteria for filtering tournament events.
@@ -17,7 +18,7 @@ message EventsFilter {
 }
 
 // TournamentsFilter specifies criteria for filtering tournaments.
-// Next id: 6
+// Next id: 7
 message TournamentsFilter {
   // Filter tournaments by a specific user's participation.
   optional string user_id = 1;
@@ -29,6 +30,8 @@ message TournamentsFilter {
   optional string name = 4;
   // Filter tournaments by custom slug (matches all tournaments sharing this custom slug).
   optional string custom_slug = 5;
+  // Filter to tournaments containing one or more events which have been updated since a particular point in time.
+  optional google.protobuf.Timestamp event_updated_since = 6;
 }
 
 // UsersFilter specifies criteria for searching users.

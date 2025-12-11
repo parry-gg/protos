@@ -11,7 +11,7 @@ import "models/image.proto";
 
 // User represents a platform user account with profile information.
 // Contains identity, contact, and personalization details.
-// Next id: 13
+// Next id: 15
 message User {
   // Unique identifier for the user (UUID v7).
   string id = 1;
@@ -37,6 +37,10 @@ message User {
   string location_city = 11;
   // Profile images (avatars, banners, etc.).
   repeated Image images = 12;
+  // Whether this user is anonymous (not connected to a real account)
+  bool is_anonymous = 13;
+  // Linked external accounts (Discord, start.gg, etc.).
+  repeated LinkedAccount linked_accounts = 14;
 }
 
 // MutableUser updates editable fields of a user profile.
@@ -64,3 +68,23 @@ message MutableUser {
   // Updated city.
   optional string location_city = 10;
 }
+
+// Supported OAuth providers for account linking
+enum LinkedAccountProvider {
+  LINKED_ACCOUNT_PROVIDER_UNSPECIFIED = 0;
+  LINKED_ACCOUNT_PROVIDER_DISCORD = 1;
+  LINKED_ACCOUNT_PROVIDER_STARTGG = 2;
+}
+
+// LinkedAccount represents an external account linked to a user.
+// Contains information about connected third-party services.
+// Next id: 4
+message LinkedAccount {
+  // Provider (e.g., LINKED_ACCOUNT_PROVIDER_DISCORD, LINKED_ACCOUNT_PROVIDER_STARTGG).
+  LinkedAccountProvider provider = 1;
+  // User ID on the external provider.
+  string user_id = 2;
+  // Username on the external provider.
+  string username = 3;
+}
+

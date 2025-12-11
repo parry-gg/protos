@@ -86,7 +86,7 @@ enum MatchState {
 
 // Match represents an individual game between participants in a bracket.
 // Contains participant slots, scoring, and progression information.
-// Next id: 16
+// Next id: 18
 message Match {
   // Unique identifier for the match (UUID v7).
   string id = 1;
@@ -114,6 +114,10 @@ message Match {
   google.protobuf.Timestamp state_updated_at = 14;
   // Individual games within this match.
   repeated MatchGame match_games = 15;
+  // The minimum placement the winner of this match is guaranteed in the event.
+  int32 winners_placement = 16;
+  // The minimum placement the loser of this match is guaranteed in the event.
+  int32 losers_placement = 17;
 }
 
 // MatchGame represents an individual game within a match set.
@@ -218,6 +222,8 @@ message Seed {
   int32 bracket_index = 4;
   // The progression which assigns an entrant to this seed in a multiphase bracket.
   Progression progression = 5;
+  // The participant who is projected to occupy this seed, if it hasn't yet been filled.
+  EventEntrant projected_event_entrant = 6;
 }
 
 // SeedMutation updates the seed number of an existing seed.

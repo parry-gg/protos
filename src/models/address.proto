@@ -1,0 +1,66 @@
+// Structured address information from geocoding services.
+// Contains location coordinates and hierarchical address components.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/timestamp.proto";
+
+// LocationType represents the precision level of geocoded coordinates.
+enum LocationType {
+  // Default unspecified location type.
+  LOCATION_TYPE_UNSPECIFIED = 0;
+  // Precise location at rooftop level or exact point.
+  LOCATION_TYPE_ROOFTOP = 1;
+  // Interpolated location between two precise points (e.g., street address).
+  LOCATION_TYPE_RANGE_INTERPOLATED = 2;
+  // Geometric center of a result such as a polyline or polygon.
+  LOCATION_TYPE_GEOMETRIC_CENTER = 3;
+  // Approximate location (e.g., postal code centroid).
+  LOCATION_TYPE_APPROXIMATE = 4;
+}
+
+// Address represents a geocoded physical location with structured components.
+// Contains coordinates, administrative divisions, and address details.
+// Next id: 19
+message Address {
+  // Unique identifier for this address record (UUID v7).
+  string id = 1;
+  // Latitude coordinate in decimal degrees.
+  double latitude = 2;
+  // Longitude coordinate in decimal degrees.
+  double longitude = 3;
+  // Human-readable formatted address string.
+  string formatted_address = 4;
+  // Full country name (e.g., "United States").
+  string country = 5;
+  // ISO 3166-1 alpha-2 country code (e.g., "US").
+  string country_code = 6;
+  // First-level administrative division (e.g., state, province).
+  string administrative_area_level_1 = 7;
+  // Second-level administrative division (e.g., county).
+  string administrative_area_level_2 = 8;
+  // City or town name.
+  string locality = 9;
+  // Neighborhood or district within a city.
+  string sublocality = 10;
+  // Postal or ZIP code.
+  string postal_code = 11;
+  // Street number (e.g., "1600").
+  string street_number = 12;
+  // Street name (e.g., "Amphitheatre Parkway").
+  string route = 13;
+  // Building name or premise identifier.
+  string premise = 14;
+  // Geocoding service's unique identifier for this location.
+  string place_id = 15;
+  // Precision level of the geocoded coordinates.
+  LocationType location_type = 16;
+  // When this address record was created.
+  google.protobuf.Timestamp created_at = 17;
+  // When this address record was last updated.
+  google.protobuf.Timestamp updated_at = 18;
+}

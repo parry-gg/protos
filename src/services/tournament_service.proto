@@ -11,6 +11,7 @@ import "google/protobuf/timestamp.proto";
 import "models/tournament.proto";
 import "models/image.proto";
 import "models/filter.proto";
+import "models/pagination.proto";
 
 // Next id: 4
 message GetTournamentRequest {
@@ -43,11 +44,13 @@ message GetTournamentsOptions {
 message GetTournamentsRequest {
   parrygg.models.TournamentsFilter filter = 1;
   GetTournamentsOptions options = 2;
+  parrygg.models.PaginationRequest pagination_request = 3;
 }
 
 message GetTournamentsResponse {
   repeated parrygg.models.Tournament tournaments = 1;
   map<string, parrygg.models.TournamentPermissionsMetadata> tournament_permissions = 2; // Maps from tournament ID to permission
+  parrygg.models.PaginationResponse pagination_response = 3;
 }
 
 message GetTournamentAttendeesRequest {
