@@ -8,6 +8,7 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "models/image.proto";
+import "google/protobuf/timestamp.proto";
 
 // User represents a platform user account with profile information.
 // Contains identity, contact, and personalization details.
@@ -86,5 +87,46 @@ message LinkedAccount {
   string user_id = 2;
   // Username on the external provider.
   string username = 3;
+}
+
+message LinkAccountAction {
+  LinkedAccount linked_account = 1;
+}
+
+message UnlinkAccountAction {
+  LinkedAccountProvider provider = 1;
+}
+
+// MergeUserAction represents information about the merging of a prior parry.gg User into a still-existing User.
+message MergeUserAction {
+  // The prior user which was merged into the user in question.
+  string from_user_id = 1;
+}
+
+enum IdentityActionType {
+  IDENTITY_ACTION_TYPE_UNSPECIFIED = 0;
+  IDENTITY_ACTION_TYPE_LINK = 1;
+  IDENTITY_ACTION_TYPE_UNLINK = 2;
+  IDENTITY_ACTION_TYPE_MERGE = 3;
+}
+
+// IdentityAction represents a past action taken affecting a user's identity.
+message IdentityAction {
+  // Unique identifier for this action (UUID v7).
+  string id = 1;
+  // The id of the affected user.
+  string user_id = 2;
+  // Time at which this action occurred.
+  google.protobuf.Timestamp created_at = 3;
+  // Type-specific action data.
+  oneof type {
+    // Linking an external account.
+    LinkAccountAction link_account_action = 4;
+    // Unlinking an external account.
+    UnlinkAccountAction unlink_account_action = 5;
+    // Merging a parry.gg user.
+    MergeUserAction merge_user_action = 6;
+  }
+
 }
 

@@ -52,6 +52,14 @@ message GetUserPlacementsResponse {
   parrygg.models.PaginationResponse pagination_response = 2;
 }
 
+message GetUserIdentityActionsRequest {
+  string id = 1;
+}
+
+message GetUserIdentityActionsResponse {
+  repeated parrygg.models.IdentityAction actions = 1;
+}
+
 service UserService {
   // Retrieves a user by ID or Keycloak entity ID.
   rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
@@ -64,5 +72,8 @@ service UserService {
 
   // Retrieves a user's recent placement data
   rpc GetUserPlacements (GetUserPlacementsRequest) returns (GetUserPlacementsResponse) {}
+
+  // Retrieves the history of actions affecting a user's account.
+  rpc GetUserIdentityActions (GetUserIdentityActionsRequest) returns (GetUserIdentityActionsResponse) {}
   
 }

@@ -27,9 +27,21 @@ enum EventState {
   EVENT_STATE_COMPLETED = 4;
 }
 
+// LocationType represents the manner in which an event takes place (e.g. Online/Offline).
+enum LocationType {
+  // Default unspecified location type.
+  LOCATION_TYPE_UNSPECIFIED = 0;
+  // Tournament/event takes place in person.
+  LOCATION_TYPE_OFFLINE = 1;
+  // Tournament/event takes place online.
+  LOCATION_TYPE_ONLINE = 2;
+  // Parts of the tournament/event take place both online and in person.
+  LOCATION_TYPE_HYBRID = 3;
+}
+
 // Event represents a single competition within a tournament.
 // Events contain phases (pools, brackets, etc.) and track participant registration.
-// Next id: 15
+// Next id: 16
 message Event {
   // Unique identifier for the event (UUID v7).
   string id = 1;
@@ -62,6 +74,8 @@ message Event {
 
   // Number of entrants registered for this event
   int32 entrant_count = 14;
+  // Location type for the event (e.g. Online, offline)
+  LocationType location_type = 15;
 }
 
 // EventMutation contains fields that can be updated on an existing event.

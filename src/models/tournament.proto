@@ -55,7 +55,7 @@ enum VisibilityLevel {
 
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 21
+// Next id: 22
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -93,11 +93,13 @@ message Tournament {
   VisibilityLevel visibility_level = 19;
   // Structured geocoded address information for the venue.
   optional Address address = 20;
+  // Location type for the tournament (e.g. Online, offline)
+  LocationType location_type = 21;
 }
 
 // TournamentMutation updates mutable fields of a tournament.
 // Subset of Tournament with fields that may be mutated by a request.
-// Next id: 14
+// Next id: 15
 message TournamentMutation {
   // Updated tournament name.
   optional string name = 1;
@@ -121,6 +123,8 @@ message TournamentMutation {
   optional string time_zone = 12;
   // Updated visibility status.
   optional VisibilityLevel visibility_level = 13;
+  // Updated location type.
+  optional LocationType location_type = 14;
 }
 
 // PageContent represents custom content pages for tournaments.
