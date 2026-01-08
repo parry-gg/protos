@@ -7,6 +7,7 @@ option java_package = "gg.parry.grpc.models";
 
 package parrygg.models;
 
+import "google/protobuf/timestamp.proto";
 import "models/bracket.proto";
 import "models/progression.proto";
 
@@ -26,7 +27,7 @@ enum PhaseState {
 
 // Phase represents a stage of competition within an event.
 // Contains one or more brackets and defines the competition format.
-// Next id: 12
+// Next id: 14
 message Phase {
   reserved 2;
   // Unique identifier for the phase (UUID v7).
@@ -49,6 +50,10 @@ message Phase {
   int32 num_entrants = 10;
   // Progression settings outward from this phase.
   repeated parrygg.models.ProgressionGroupSettings progression_group_settings = 11;
+  // When this phase record was created.
+  google.protobuf.Timestamp created_at = 12;
+  // When this phase record was last updated.
+  google.protobuf.Timestamp updated_at = 13;
 }
 
 // PhaseMutation updates mutable fields of a phase.

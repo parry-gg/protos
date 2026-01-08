@@ -41,7 +41,7 @@ enum LocationType {
 
 // Event represents a single competition within a tournament.
 // Events contain phases (pools, brackets, etc.) and track participant registration.
-// Next id: 16
+// Next id: 19
 message Event {
   // Unique identifier for the event (UUID v7).
   string id = 1;
@@ -53,8 +53,10 @@ message Event {
   string description_md = 4;
   // When the event is scheduled to start.
   google.protobuf.Timestamp start_date = 5;
+  // Set time for registration to open.
+  google.protobuf.Timestamp registration_start_date = 16;
   // Deadline for registration to close.
-  google.protobuf.Timestamp registration_close_time = 6;
+  google.protobuf.Timestamp registration_end_date = 6;
   // Entry fee in cents (USD).
   int32 price = 7;
   // Maximum number of entrants allowed (0 = unlimited).
@@ -76,11 +78,15 @@ message Event {
   int32 entrant_count = 14;
   // Location type for the event (e.g. Online, offline)
   LocationType location_type = 15;
+  // When this event record was created.
+  google.protobuf.Timestamp created_at = 17;
+  // When this event record was last updated.
+  google.protobuf.Timestamp updated_at = 18;
 }
 
 // EventMutation contains fields that can be updated on an existing event.
 // All fields are optional - only specified fields will be updated.
-// Next id: 9
+// Next id: 10
 message EventMutation {
   // Updated display name for the event.
   optional string name = 1;
@@ -88,8 +94,10 @@ message EventMutation {
   optional string description_md = 2;
   // Updated start time.
   optional google.protobuf.Timestamp start_date = 3;
+  // Updated time for registration to open.
+  optional google.protobuf.Timestamp registration_start_date = 9;
   // Updated registration deadline.
-  optional google.protobuf.Timestamp registration_close_time = 4;
+  optional google.protobuf.Timestamp registration_end_date = 4;
   // Updated entry fee in cents.
   optional int32 price = 5;
   // Updated maximum entrant limit.

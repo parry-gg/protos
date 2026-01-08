@@ -55,7 +55,7 @@ enum VisibilityLevel {
 
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 22
+// Next id: 26
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -95,11 +95,19 @@ message Tournament {
   optional Address address = 20;
   // Location type for the tournament (e.g. Online, offline)
   LocationType location_type = 21;
+  // Set time for registration to open.
+  google.protobuf.Timestamp registration_start_date = 22;
+  // Deadline for registration to close.
+  google.protobuf.Timestamp registration_end_date = 23;
+  // When this tournament record was created.
+  google.protobuf.Timestamp created_at = 24;
+  // When this tournament record was last updated.
+  google.protobuf.Timestamp updated_at = 25;
 }
 
 // TournamentMutation updates mutable fields of a tournament.
 // Subset of Tournament with fields that may be mutated by a request.
-// Next id: 15
+// Next id: 17
 message TournamentMutation {
   // Updated tournament name.
   optional string name = 1;
@@ -125,6 +133,10 @@ message TournamentMutation {
   optional VisibilityLevel visibility_level = 13;
   // Updated location type.
   optional LocationType location_type = 14;
+  // Updated time for registration to open.
+  optional google.protobuf.Timestamp registration_start_date = 15;
+  // Updated deadline for registration to close.
+  optional google.protobuf.Timestamp registration_end_date = 16;
 }
 
 // PageContent represents custom content pages for tournaments.

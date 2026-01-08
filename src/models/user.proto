@@ -79,7 +79,7 @@ enum LinkedAccountProvider {
 
 // LinkedAccount represents an external account linked to a user.
 // Contains information about connected third-party services.
-// Next id: 4
+// Next id: 5
 message LinkedAccount {
   // Provider (e.g., LINKED_ACCOUNT_PROVIDER_DISCORD, LINKED_ACCOUNT_PROVIDER_STARTGG).
   LinkedAccountProvider provider = 1;
@@ -87,6 +87,8 @@ message LinkedAccount {
   string user_id = 2;
   // Username on the external provider.
   string username = 3;
+  // URL slug for the provider profile (e.g., start.gg slug).
+  string slug = 4;
 }
 
 message LinkAccountAction {
