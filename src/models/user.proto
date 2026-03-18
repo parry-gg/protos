@@ -12,7 +12,7 @@ import "google/protobuf/timestamp.proto";
 
 // User represents a platform user account with profile information.
 // Contains identity, contact, and personalization details.
-// Next id: 15
+// Next id: 17
 message User {
   // Unique identifier for the user (UUID v7).
   string id = 1;
@@ -42,11 +42,15 @@ message User {
   bool is_anonymous = 13;
   // Linked external accounts (Discord, start.gg, etc.).
   repeated LinkedAccount linked_accounts = 14;
+  // Name for this user's sponsor, if any.
+  string sponsor_name = 15;
+  // Per-user feature flags granted via direct DB updates.
+  repeated string feature_flags = 16;
 }
 
 // MutableUser updates editable fields of a user profile.
 // Subset of User with fields that may be mutated by a request.
-// Next id: 11
+// Next id: 12
 message MutableUser {
   // Updated gamer tag.
   optional string gamer_tag = 1;
@@ -68,6 +72,8 @@ message MutableUser {
   optional string location_state = 9;
   // Updated city.
   optional string location_city = 10;
+  // Updated sponsor name.
+  optional string sponsor_name = 11;
 }
 
 // Supported OAuth providers for account linking

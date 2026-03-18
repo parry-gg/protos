@@ -330,6 +330,16 @@ message BracketSlugId {
   string bracket_slug = 4;
 }
 
+// BracketIdentifier allows lookups by ID or slug path.
+message BracketIdentifier {
+  oneof identifier {
+    // Direct bracket ID lookup.
+    string id = 1;
+    // Slug-based path lookup.
+    BracketSlugId slug_id = 2;
+  }
+}
+
 // MatchContext provides a match with tournament and bracket metadata for UI display.
 message MatchContext {
   // The match information.

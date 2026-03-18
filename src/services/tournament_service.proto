@@ -41,10 +41,13 @@ message GetTournamentsOptions {
   bool return_permissions = 1;
 }
 
+// Next id: 5
 message GetTournamentsRequest {
   parrygg.models.TournamentsFilter filter = 1;
   GetTournamentsOptions options = 2;
   parrygg.models.PaginationRequest pagination_request = 3;
+  // Sort order for the returned tournaments.
+  parrygg.models.TournamentsSortOrder sort_order = 4;
 }
 
 message GetTournamentsResponse {

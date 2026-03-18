@@ -8,10 +8,12 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 import "models/address.proto";
 import "models/image.proto";
 import "models/event.proto";
 import "models/group.proto";
+import "models/payment.proto";
 import "models/slug.proto";
 import "models/user.proto";
 
@@ -53,9 +55,18 @@ enum VisibilityLevel {
   VISIBILITY_LEVEL_HIDDEN = 3;
 }
 
+// EntryFeeType distinguishes free vs paid tournaments.
+enum EntryFeeType {
+  ENTRY_FEE_TYPE_UNSPECIFIED = 0;
+  // No payment required for tournament entry.
+  ENTRY_FEE_TYPE_FREE = 1;
+  // Payment required for tournament entry.
+  ENTRY_FEE_TYPE_PAID = 2;
+}
+
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 26
+// Next id: 28
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -103,11 +114,17 @@ message Tournament {
   google.protobuf.Timestamp created_at = 24;
   // When this tournament record was last updated.
   google.protobuf.Timestamp updated_at = 25;
+  // Whether entry to this tournament is free or paid.
+  EntryFeeType entry_fee_type = 26;
+  // Requirements to register for this tournament.
+  repeated TournamentRequirement requirements = 27;
+  // Customized UI alterations for this tournament.
+  optional google.protobuf.Struct ui_customization = 28;
 }
 
 // TournamentMutation updates mutable fields of a tournament.
 // Subset of Tournament with fields that may be mutated by a request.
-// Next id: 17
+// Next id: 18
 message TournamentMutation {
   // Updated tournament name.
   optional string name = 1;
@@ -137,6 +154,8 @@ message TournamentMutation {
   optional google.protobuf.Timestamp registration_start_date = 15;
   // Updated deadline for registration to close.
   optional google.protobuf.Timestamp registration_end_date = 16;
+  // Updated entry fee type.
+  optional EntryFeeType entry_fee_type = 17;
 }
 
 // PageContent represents custom content pages for tournaments.
@@ -165,7 +184,7 @@ message MutablePageContent {
 }
 
 // TournamentRegistration tracks a user's registration for a tournament.
-// Next id: 6
+// Next id: 7
 message TournamentRegistration {
   reserved 2;
   // ID of the tournament being registered for.
@@ -176,6 +195,8 @@ message TournamentRegistration {
   repeated EventRegistration event_registrations = 4;
   // The user who is registered.
   User user = 5;
+  // Tournament Pass type of the user's registration
+  parrygg.models.TournamentPassType pass_type = 6;
 }
 
 // TournamentRegistrationMutation updates registration details.
@@ -235,4 +256,36 @@ message TournamentIdentifier {
 message TournamentPermissionsMetadata {
   // The user's permission level for the tournament.
   parrygg.models.TournamentPermission tournament_permission = 1;
+}
+
+enum DiscordRequirementFailureCause {
+  REQUIREMENT_FAILURE_CAUSE_UNSPECIFIED = 0;
+  REQUIREMENT_FAILURE_CAUSE_UNAUTHENTICATED = 1;
+  REQUIREMENT_FAILURE_CAUSE_ACCOUNT_UNLINKED = 2;
+  REQUIREMENT_FAILURE_CAUSE_NOT_IN_SERVER = 3;
+}
+
+message DiscordRequirement {
+  string server_id = 1;
+  string invite_link = 2;
+  string description = 3;
+}
+
+enum TournamentRequirementType {
+  TOURNAMENT_REQUIREMENT_TYPE_UNSPECIFIED = 0;
+  TOURNAMENT_REQUIREMENT_TYPE_DISCORD = 1;
+}
+
+message TournamentRequirement {
+  string id = 1;
+  int32 type = 2;
+  oneof type_data {
+    DiscordRequirement discord_requirement = 3;
+  }
+}
+
+message TournamentRequirementMutation {
+  oneof type_data {
+    DiscordRequirement discord_requirement = 1;
+  }
 }

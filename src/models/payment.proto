@@ -1,0 +1,18 @@
+// Payment system models for tournament registration payments
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+enum TournamentPassType {
+  TOURNAMENT_PASS_TYPE_UNSPECIFIED = 0;
+  TOURNAMENT_PASS_TYPE_SPECTATOR = 1;
+  TOURNAMENT_PASS_TYPE_COMPETITOR = 2;
+  TOURNAMENT_PASS_TYPE_VENUE_FEE_ONLY = 3;
+}
+

@@ -9,6 +9,9 @@ package parrygg.models;
 
 import "google/protobuf/timestamp.proto";
 import "models/bracket.proto";
+import "models/event.proto";
+import "models/phase.proto";
+import "models/tournament.proto";
 
 // EventsFilter specifies criteria for filtering tournament events.
 // Next id: 2
@@ -44,6 +47,15 @@ message UsersFilter {
   optional bool include_anonymous_users = 3;
 }
 
+// TournamentsSortOrder specifies how tournaments should be ordered in the response.
+enum TournamentsSortOrder {
+  // No specific sort order applied.
+  TOURNAMENTS_SORT_ORDER_UNSPECIFIED = 0;
+  // Home page sort order: popular first, then by status (in_progress > not_started > ended),
+  // then by start date (ascending for upcoming, descending for in-progress/ended).
+  TOURNAMENTS_SORT_ORDER_HOME = 1;
+}
+
 // AdminFilterPermission defines administrative permission levels for filtering.
 // Corresponds to TournamentPermission options in tournament.proto, but with the extra "ANY" option.
 enum AdminFilterPermission {
@@ -66,6 +78,7 @@ message AdminFilter {
 }
 
 // MatchesFilter specifies criteria for filtering matches.
+// Next id: 9
 message MatchesFilter {
   // Filter matches by a specific user's participation.
   optional string user_id = 1;
@@ -73,4 +86,14 @@ message MatchesFilter {
   optional string entrant_id = 2;
   // Filter matches by their current state.
   optional MatchState state = 3;
+  // Filter matches to tournaments in specific state(s).
+  repeated TournamentState tournament_state = 4;
+  // Filter matches by bracket.
+  optional BracketIdentifier bracket = 5;
+  // Filter matches by phase.
+  optional PhaseIdentifier phase = 6;
+  // Filter matches by event.
+  optional EventIdentifier event = 7;
+  // Filter matches by tournament.
+  optional TournamentIdentifier tournament = 8;
 }
