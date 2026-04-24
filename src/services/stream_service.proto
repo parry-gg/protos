@@ -1,0 +1,116 @@
+// Stream management service for tournaments.
+// Provides CRUD for streams and queue operations for matches on streams.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.services";
+
+package parrygg.services;
+
+import "models/stream.proto";
+import "models/tournament.proto";
+
+// Request to create a new stream for a tournament.
+// Next id: 3
+message CreateStreamRequest {
+  // Tournament to create the stream for.
+  parrygg.models.TournamentIdentifier tournament_identifier = 1;
+  // Stream fields to set.
+  parrygg.models.StreamMutation stream = 2;
+}
+
+// Next id: 2
+message CreateStreamResponse {
+  parrygg.models.Stream stream = 1;
+}
+
+// Request to update an existing stream.
+// Next id: 3
+message UpdateStreamRequest {
+  string id = 1;
+  parrygg.models.StreamMutation stream = 2;
+}
+
+// Next id: 2
+message UpdateStreamResponse {
+  parrygg.models.Stream stream = 1;
+}
+
+// Request to delete a stream. Deletes cascade to queue entries.
+// Next id: 2
+message DeleteStreamRequest {
+  string id = 1;
+}
+
+// Next id: 1
+message DeleteStreamResponse {}
+
+// Request to get all streams for a tournament.
+// Next id: 2
+message GetTournamentStreamsRequest {
+  parrygg.models.TournamentIdentifier tournament_identifier = 1;
+}
+
+// Next id: 2
+message GetTournamentStreamsResponse {
+  repeated parrygg.models.Stream streams = 1;
+}
+
+// Request to get the current queue for a stream.
+// Next id: 2
+message GetStreamQueueRequest {
+  string stream_id = 1;
+}
+
+// Next id: 2
+message GetStreamQueueResponse {
+  // Entries in position order.
+  repeated parrygg.models.StreamQueueEntry entries = 1;
+}
+
+// Request to add a match to a stream. The match lands in the first unfilled
+// slot in [0, capacity) if any is vacant; otherwise it is appended to the
+// tail of the waiting queue. Match must be READY or IN_PROGRESS. A match may
+// belong to at most one stream queue.
+// Next id: 3
+message AddMatchToStreamQueueRequest {
+  string stream_id = 1;
+  string match_id = 2;
+}
+
+// Next id: 2
+message AddMatchToStreamQueueResponse {
+  parrygg.models.StreamQueueEntry entry = 1;
+}
+
+// Request to remove a match from its stream queue by entry id.
+// Next id: 2
+message RemoveMatchFromStreamQueueRequest {
+  string entry_id = 1;
+}
+
+// Next id: 1
+message RemoveMatchFromStreamQueueResponse {}
+
+// Request to move a queue entry to a specific position within its stream.
+// Positions are contiguous 0-indexed; shift logic renumbers neighbors.
+// Next id: 3
+message ReorderStreamQueueEntryRequest {
+  string entry_id = 1;
+  int32 new_position = 2;
+}
+
+// Next id: 1
+message ReorderStreamQueueEntryResponse {}
+
+service StreamService {
+  rpc CreateStream(CreateStreamRequest) returns (CreateStreamResponse) {}
+  rpc UpdateStream(UpdateStreamRequest) returns (UpdateStreamResponse) {}
+  rpc DeleteStream(DeleteStreamRequest) returns (DeleteStreamResponse) {}
+  rpc GetTournamentStreams(GetTournamentStreamsRequest) returns (GetTournamentStreamsResponse) {}
+
+  rpc GetStreamQueue(GetStreamQueueRequest) returns (GetStreamQueueResponse) {}
+  rpc AddMatchToStreamQueue(AddMatchToStreamQueueRequest) returns (AddMatchToStreamQueueResponse) {}
+  rpc RemoveMatchFromStreamQueue(RemoveMatchFromStreamQueueRequest) returns (RemoveMatchFromStreamQueueResponse) {}
+  rpc ReorderStreamQueueEntry(ReorderStreamQueueEntryRequest) returns (ReorderStreamQueueEntryResponse) {}
+}
