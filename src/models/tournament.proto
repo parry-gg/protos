@@ -13,6 +13,7 @@ import "models/address.proto";
 import "models/image.proto";
 import "models/event.proto";
 import "models/group.proto";
+import "models/form_field.proto";
 import "models/payment.proto";
 import "models/slug.proto";
 import "models/user.proto";
@@ -66,7 +67,7 @@ enum EntryFeeType {
 
 // Tournament represents a competitive gaming tournament with multiple events.
 // Contains all tournament metadata, events, and administrative information.
-// Next id: 28
+// Next id: 30
 message Tournament {
   // Unique identifier for the tournament (UUID v7).
   string id = 1;
@@ -120,6 +121,8 @@ message Tournament {
   repeated TournamentRequirement requirements = 27;
   // Customized UI alterations for this tournament.
   optional google.protobuf.Struct ui_customization = 28;
+  // Form fields that apply to all orders for this tournament.
+  repeated FormField registration_form_fields = 29;
 }
 
 // TournamentMutation updates mutable fields of a tournament.
@@ -184,7 +187,7 @@ message MutablePageContent {
 }
 
 // TournamentRegistration tracks a user's registration for a tournament.
-// Next id: 7
+// Next id: 9
 message TournamentRegistration {
   reserved 2;
   // ID of the tournament being registered for.
@@ -197,6 +200,8 @@ message TournamentRegistration {
   User user = 5;
   // Tournament Pass type of the user's registration
   parrygg.models.TournamentPassType pass_type = 6;
+  //   // Form field responses from orders where this user was the payer.
+  repeated FormFieldResponse form_responses = 8;
 }
 
 // TournamentRegistrationMutation updates registration details.
@@ -271,21 +276,30 @@ message DiscordRequirement {
   string description = 3;
 }
 
+message EventRegistrationRequirement {
+  repeated string event_ids = 1;
+}
+
 enum TournamentRequirementType {
   TOURNAMENT_REQUIREMENT_TYPE_UNSPECIFIED = 0;
   TOURNAMENT_REQUIREMENT_TYPE_DISCORD = 1;
+  TOURNAMENT_REQUIREMENT_TYPE_EVENT_REGISTRATION = 2;
 }
 
+// Next id: 5
 message TournamentRequirement {
   string id = 1;
   int32 type = 2;
   oneof type_data {
     DiscordRequirement discord_requirement = 3;
+    EventRegistrationRequirement event_registration_requirement = 4;
   }
 }
 
+// Next id: 3
 message TournamentRequirementMutation {
   oneof type_data {
     DiscordRequirement discord_requirement = 1;
+    EventRegistrationRequirement event_registration_requirement = 2;
   }
 }

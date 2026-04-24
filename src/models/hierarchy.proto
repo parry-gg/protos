@@ -2,6 +2,8 @@
 // Provides path-based navigation through tournament/event/phase/bracket hierarchies.
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option java_multiple_files = true;
 option java_package = "gg.parry.grpc.models";
 
@@ -29,6 +31,11 @@ message Path {
   string name = 3;
   // URL-friendly slug for this path element.
   string slug = 4;
+  // Cover image URL for this path element. Populated for PATH_TYPE_EVENT (game cover image).
+  optional string image_url = 5;
+  // Start time for this path element. Populated for PATH_TYPE_EVENT (event start date)
+  // and PATH_TYPE_BRACKET (wave start time, if the bracket is assigned to a wave).
+  optional google.protobuf.Timestamp start_time = 6;
 }
 
 // EventSlugPath provides slug-based identification for events.
@@ -65,4 +72,6 @@ message BracketSlugPath {
 message Hierarchy {
   // Ordered path elements from tournament down to target entity.
   repeated Path paths = 1;
+  // Sibling paths (other paths in the same tournament which aren't part of the route to the target entity).
+  repeated Path sibling_paths = 2;
 }

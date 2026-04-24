@@ -8,6 +8,8 @@ package parrygg.models;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
+import "models/form_field.proto";
+import "models/image.proto";
 
 enum TournamentPassType {
   TOURNAMENT_PASS_TYPE_UNSPECIFIED = 0;

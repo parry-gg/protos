@@ -16,10 +16,11 @@ message GetMatchRequest {
   string id = 1;
 }
 
-// GetMatchResponse contains the requested match.
+// GetMatchResponse contains the requested match with context.
 message GetMatchResponse {
-  // The requested match with participant slots and scores.
-  parrygg.models.Match match = 1;
+  reserved 1;
+  // The requested match with tournament context, hierarchy, and metadata.
+  parrygg.models.MatchContext match = 2;
 }
 
 // GetMatchesRequest retrieves multiple matches based on filter criteria.
@@ -62,6 +63,17 @@ message StartMatchRequest {
 // StartMatchResponse confirms match start.
 message StartMatchResponse {}
 
+// FinalizeMatchRequest completes a match using its current slot scores, running
+// placement and winner propagation. Use this to close out a match whose scores
+// were accumulated from individual MatchGame reports.
+message FinalizeMatchRequest {
+  // ID of the match to finalize.
+  string id = 1;
+}
+
+// FinalizeMatchResponse confirms the match was finalized.
+message FinalizeMatchResponse {}
+
 // MatchService provides tournament match management operations.
 // Handles match lifecycle, scoring, and result reporting.
 service MatchService {
@@ -75,4 +87,7 @@ service MatchService {
   rpc StartMatch (StartMatchRequest) returns (StartMatchResponse) {}
   // Reset a match to initial state, clearing results.
   rpc ResetMatch (ResetMatchRequest) returns (ResetMatchResponse) {}
+  // Finalize a match using its current slot scores, completing the match and
+  // propagating winners to the next round.
+  rpc FinalizeMatch (FinalizeMatchRequest) returns (FinalizeMatchResponse) {}
 }

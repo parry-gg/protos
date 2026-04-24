@@ -1,0 +1,75 @@
+// Stream management for tournament broadcasting.
+// Streams represent Twitch/YouTube channels a TO broadcasts matches on,
+// with a queue of matches controlling which ones are currently on stream.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+// StreamPlatform identifies where a stream is broadcast.
+enum StreamPlatform {
+  STREAM_PLATFORM_UNSPECIFIED = 0;
+  STREAM_PLATFORM_TWITCH = 1;
+  STREAM_PLATFORM_YOUTUBE = 2;
+}
+
+// StreamQueueEntryStatus distinguishes matches actively on stream from
+// matches waiting in line.
+enum StreamQueueEntryStatus {
+  STREAM_QUEUE_ENTRY_STATUS_UNSPECIFIED = 0;
+  // Match is waiting in the queue.
+  STREAM_QUEUE_ENTRY_STATUS_QUEUED = 1;
+  // Match is currently being broadcast on the stream.
+  STREAM_QUEUE_ENTRY_STATUS_ONSTREAM = 2;
+}
+
+// Stream represents a broadcast channel for a tournament.
+// Next id: 7
+message Stream {
+  // Unique identifier for the stream (UUID v7).
+  string id = 1;
+  // Parent tournament.
+  string tournament_id = 2;
+  // Broadcast platform.
+  StreamPlatform platform = 3;
+  // Platform-specific channel identifier (e.g., twitch username).
+  string channel = 4;
+  // Optional TO-facing display name.
+  optional string display_name = 5;
+  // Maximum number of matches that can be onstream simultaneously (quad-stream support).
+  int32 capacity = 6;
+}
+
+// StreamMutation contains fields that can be set or updated on a stream.
+// All fields are optional - only specified fields will be updated.
+// Next id: 5
+message StreamMutation {
+  optional StreamPlatform platform = 1;
+  optional string channel = 2;
+  optional string display_name = 3;
+  optional int32 capacity = 4;
+}
+
+// StreamQueueEntry represents a match's membership in a stream's queue.
+// A match may belong to at most one stream queue at a time.
+// Next id: 6
+message StreamQueueEntry {
+  // Unique identifier for the queue entry (UUID v7).
+  string id = 1;
+  // The stream this entry belongs to.
+  string stream_id = 2;
+  // The match being queued.
+  string match_id = 3;
+  // The 0-indexed slot/queue position within the stream. Positions
+  // [0, capacity) are the onstream slots (may have gaps if the queue is
+  // empty); positions [capacity, ...) are the waiting queue and are always
+  // contiguous. When a match at position P is removed, the queue head is
+  // moved in-place to position P and the remaining queue shifts up; if the
+  // queue was empty, slot P becomes vacant.
+  int32 position = 4;
+  // Whether the match is onstream or queued. Derived server-side from
+  // (position < capacity) — read-only for clients.
+  StreamQueueEntryStatus status = 5;
+}

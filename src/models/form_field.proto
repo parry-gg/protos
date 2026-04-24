@@ -1,0 +1,76 @@
+// Form field definitions for collecting user input on tournaments and products.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/struct.proto";
+
+enum FormFieldType {
+  FORM_FIELD_TYPE_UNSPECIFIED = 0;
+  FORM_FIELD_TYPE_TEXT = 1;
+  FORM_FIELD_TYPE_SINGLE_SELECT = 2;
+  FORM_FIELD_TYPE_MULTI_SELECT = 3;
+  FORM_FIELD_TYPE_BOOLEAN = 4;
+  FORM_FIELD_TYPE_NUMERIC = 5;
+}
+
+// A form field / question that users must answer.
+// Next id: 8
+message FormField {
+  // Unique identifier (UUID v7).
+  string id = 1;
+  // Display label / question text.
+  string label = 2;
+  // Type of input expected.
+  FormFieldType field_type = 3;
+  // Options for select types (e.g. ["S", "M", "L", "XL"]).
+  repeated string options = 4;
+  // Whether a response is required.
+  bool required = 5;
+  // Display order.
+  int32 sort_order = 6;
+  // Whether this field is active.
+  bool enabled = 7;
+}
+
+// Mutation for creating/updating a form field.
+// Next id: 7
+message FormFieldMutation {
+  // Display label / question text.
+  optional string label = 1;
+  // Type of input expected.
+  optional FormFieldType field_type = 2;
+  // Options for select types.
+  repeated string options = 3;
+  // Whether a response is required.
+  optional bool required = 4;
+  // Display order.
+  optional int32 sort_order = 5;
+  // Whether this field is active.
+  optional bool enabled = 6;
+}
+
+// A user's response to a form field, submitted with an order.
+// Next id: 3
+message FormFieldResponseMutation {
+  // ID of the form field being answered.
+  string field_id = 1;
+  // The response value.
+  google.protobuf.Value response = 2;
+}
+
+// A persisted form field response (snapshot at purchase time).
+// Next id: 5
+message FormFieldResponse {
+  // ID of the form field.
+  string field_id = 1;
+  // Label at time of purchase.
+  string label = 2;
+  // Field type at time of purchase.
+  FormFieldType field_type = 3;
+  // The response value.
+  google.protobuf.Value response = 4;
+}

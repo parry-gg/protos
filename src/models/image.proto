@@ -8,7 +8,7 @@ option java_package = "gg.parry.grpc.models";
 package parrygg.models;
 
 // ImageType defines the purpose and display context for images.
-// Next id: 5
+// Next id: 6
 enum ImageType {
   // Default unspecified image type.
   IMAGE_TYPE_UNSPECIFIED = 0;
@@ -18,8 +18,10 @@ enum ImageType {
   IMAGE_TYPE_AVATAR = 2;
   // Cover image for large background displays.
   IMAGE_TYPE_COVER = 3;
-  // Sponsor image for user profiles.
-  IMAGE_TYPE_SPONSOR = 4;
+  // Badge image for small secondary visuals (e.g. sponsor logos).
+  IMAGE_TYPE_BADGE = 4;
+  // Feature image for showcasing entities in cards, grids, and detail views.
+  IMAGE_TYPE_FEATURE = 5;
 }
 
 // Image represents a visual asset with type classification.

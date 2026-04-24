@@ -77,6 +77,8 @@ message GetEventPlacementsRequest {
 message GetEventPlacementsResponse {
   // Final placements ordered by ranking.
   repeated parrygg.models.Placement placements = 1;
+  // Match results for all Entrants (includes placement).
+  repeated parrygg.models.EntrantResult results = 2;
 }
 
 // GetEntrantResultRequest retrieves information about a particular entrant or user's performance within an event.

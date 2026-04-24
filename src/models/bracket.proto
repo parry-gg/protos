@@ -13,6 +13,8 @@ import "models/entrant.proto";
 import "models/progression.proto";
 import "models/hierarchy.proto";
 import "models/game.proto";
+import "models/stream.proto";
+import "models/wave.proto";
 
 // BracketType defines the format for the bracket.
 enum BracketType {
@@ -41,7 +43,7 @@ enum BracketState {
 }
 
 // Bracket represents a tournament bracket containing matches and seeding.
-// Next id: 13
+// Next id: 15
 message Bracket {
   // Unique identifier for the bracket (UUID v7).
   string id = 1;
@@ -67,6 +69,24 @@ message Bracket {
   BracketType type = 11;
   // Seeds in future phases which progressed from this bracket.
   repeated Seed progressed_seeds = 12;
+  // The wave this bracket is assigned to, if any.
+  Wave wave = 13;
+  // Rounds within this bracket, keyed by (number, winners_side) with human-readable labels.
+  repeated Round rounds = 14;
+}
+
+// Round groups matches that share a bracket position within a Bracket and carries
+// round-level display data. Always returned nested inside a Bracket; identified by
+// (number, winners_side) within that Bracket. Matches link to their Round via their
+// own round and winners_side fields.
+// Next id: 4
+message Round {
+  // Round number within the bracket (1-indexed).
+  int32 number = 1;
+  // Whether this round is on the winners side (true) or losers side (false).
+  bool winners_side = 2;
+  // Human-readable label (e.g. "Winners Final", "Losers Semi-Final", "Grand Final").
+  string label = 3;
 }
 
 
@@ -98,7 +118,7 @@ enum MatchGameState {
 
 // Match represents an individual game between participants in a bracket.
 // Contains participant slots, scoring, and progression information.
-// Next id: 20
+// Next id: 21
 message Match {
   // Unique identifier for the match (UUID v7).
   string id = 1;
@@ -134,6 +154,8 @@ message Match {
   google.protobuf.Timestamp started_at = 18;
   // When the match was marked as completed.
   google.protobuf.Timestamp ended_at = 19;
+  // This match's membership in a stream queue, if any.
+  optional StreamQueueEntry stream_queue_entry = 20;
 }
 
 // MatchGame represents an individual game within a match set.
@@ -341,6 +363,7 @@ message BracketIdentifier {
 }
 
 // MatchContext provides a match with tournament and bracket metadata for UI display.
+// Next id: 8
 message MatchContext {
   // The match information.
   Match match = 1;
@@ -354,4 +377,7 @@ message MatchContext {
   repeated Seed seeds = 5;
   // The game being played in this match (e.g., Street Fighter, Smash Bros).
   Game game = 6;
+  // The round this match belongs to, embedded so single-match callers don't need a
+  // second lookup.
+  Round round = 7;
 }

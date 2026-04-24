@@ -1,0 +1,36 @@
+// Wave management for tournament scheduling.
+// Waves represent timed, named periods within a tournament.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "gg.parry.grpc.models";
+
+package parrygg.models;
+
+import "google/protobuf/timestamp.proto";
+
+// Wave represents a timed period within a tournament.
+// Brackets can be assigned to waves for scheduling purposes.
+// Next id: 5
+message Wave {
+  // Unique identifier for the wave (UUID v7).
+  string id = 1;
+  // Display name for the wave.
+  string name = 2;
+  // When the wave period begins.
+  google.protobuf.Timestamp start_at = 3;
+  // When the wave period ends.
+  google.protobuf.Timestamp end_at = 4;
+}
+
+// WaveMutation contains fields that can be set or updated on a wave.
+// All fields are optional - only specified fields will be updated.
+// Next id: 4
+message WaveMutation {
+  // Updated display name for the wave.
+  optional string name = 1;
+  // Updated start time.
+  optional google.protobuf.Timestamp start_at = 2;
+  // Updated end time.
+  optional google.protobuf.Timestamp end_at = 3;
+}

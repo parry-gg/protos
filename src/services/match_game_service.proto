@@ -49,6 +49,25 @@ message DeleteMatchGameResponse {
   parrygg.models.MatchGame match_game = 1;
 }
 
+// BatchReportMatchGamesRequest replaces all games for a match with the provided
+// list. Existing games for the match are deleted before the new games are
+// inserted. If finalize is true, the match is also finalized (transitioned to
+// completed with winner propagation) in the same transaction.
+message BatchReportMatchGamesRequest {
+  // ID of the parent match to report games for.
+  string match_id = 1;
+  // Games to insert (replaces all existing games for the match).
+  repeated parrygg.models.MatchGameMutation match_games = 2;
+  // If true, finalize the match using the derived scores after replacing games.
+  bool finalize = 3;
+}
+
+// BatchReportMatchGamesResponse contains the newly inserted match games.
+message BatchReportMatchGamesResponse {
+  // The match games that were created, in insertion order.
+  repeated parrygg.models.MatchGame match_games = 1;
+}
+
 // MatchGameService provides match game management operations.
 // Handles individual games within matches including stage selection and per-game scoring.
 service MatchGameService {
@@ -58,4 +77,6 @@ service MatchGameService {
   rpc UpdateMatchGame (UpdateMatchGameRequest) returns (UpdateMatchGameResponse) {}
   // Delete a match game from its parent match.
   rpc DeleteMatchGame (DeleteMatchGameRequest) returns (DeleteMatchGameResponse) {}
+  // Replace all games for a match in one call, optionally finalizing the match.
+  rpc BatchReportMatchGames (BatchReportMatchGamesRequest) returns (BatchReportMatchGamesResponse) {}
 }

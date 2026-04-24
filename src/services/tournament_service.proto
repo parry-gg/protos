@@ -8,10 +8,12 @@ option java_package = "gg.parry.grpc.services";
 package parrygg.services;
 
 import "google/protobuf/timestamp.proto";
+import "models/form_field.proto";
 import "models/tournament.proto";
 import "models/image.proto";
 import "models/filter.proto";
 import "models/pagination.proto";
+import "models/payment.proto";
 
 // Next id: 4
 message GetTournamentRequest {
@@ -75,7 +77,6 @@ message GetTournamentAdminsRequest {
 message GetTournamentAdminsResponse {
   repeated parrygg.models.TournamentAdmin admins = 1;
 }
-
 
 service TournamentService {
   // Retrieves a tournament by ID or slug.
